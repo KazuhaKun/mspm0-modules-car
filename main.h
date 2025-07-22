@@ -14,5 +14,7 @@
 #include "wit.h"
 #include "vl53l0x.h"
 #include "lsm6dsv16x.h"
+#include "MotorControl.h"
+
 
 #endif  /* #ifndef _MAIN_H_ */

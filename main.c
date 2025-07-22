@@ -38,13 +38,25 @@ int main(void)
     SYSCFG_DL_init();
     SysTick_Init();
 
-    // MPU6050_Init();
-    // OLED_Init();
+    MPU6050_Init();
+    OLED_Init();
     // Ultrasonic_Init();
     // BNO08X_Init();
     // WIT_Init();
     // VL53L0X_Init();
     // LSM6DSV16X_Init();
+
+    MotorControl_Init();    // 初始化电机控制系统
+    
+    // 设置双电机PID参数
+    MotorControl_SetPIDParams_All(2.6f, 1.3f, 0.0f);    // 设置所有电机PID参数
+    
+    // 使能双电机PID控制
+    MotorControl_EnablePID_All();    // 使能所有电机PID控制
+    
+    // 设置双电机目标速度
+    MotorControl_SetTargetSpeed_Dual(100.0f, 100.0f);    // 左右电机都设置为100脉冲每秒
+
 
     while (1) 
     {

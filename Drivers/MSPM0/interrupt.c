@@ -6,6 +6,8 @@
 #include "wit.h"
 #include "vl53l0x.h"
 #include "lsm6dsv16x.h"
+#include "MotorControl.h"
+
 
 void SysTick_Handler(void)
 {
@@ -105,17 +107,27 @@ void UART_WIT_INST_IRQHandler(void)
 void GROUP1_IRQHandler(void)
 {
     switch (DL_Interrupt_getPendingGroup(DL_INTERRUPT_GROUP_1)) {
-        /* MPU6050 INT */
-        #if defined GPIO_MPU6050_PORT
-            #if defined GPIO_MPU6050_INT_IIDX
-            case GPIO_MPU6050_INT_IIDX:
-            #elif (GPIO_MPU6050_PORT == GPIOA) && (defined GPIO_MULTIPLE_GPIOA_INT_IIDX)
-            case GPIO_MULTIPLE_GPIOA_INT_IIDX:
-            #elif (GPIO_MPU6050_PORT == GPIOB) && (defined GPIO_MULTIPLE_GPIOB_INT_IIDX)
-            case GPIO_MULTIPLE_GPIOB_INT_IIDX:
-            #endif
+        /* GPIOB 多功能中断处理 - MPU6050 和 编码器都在这里 */
+        #if defined GPIO_MULTIPLE_GPIOB_INT_IIDX
+        case GPIO_MULTIPLE_GPIOB_INT_IIDX:
+            // 检查是否是MPU6050中断
+            #if defined GPIO_MPU6050_PORT && defined GPIO_MPU6050_PIN_INT_PIN
+            if (DL_GPIO_getEnabledInterruptStatus(GPIO_MPU6050_PORT, GPIO_MPU6050_PIN_INT_PIN)) {
                 Read_Quad();
-                break;
+                DL_GPIO_clearInterruptStatus(GPIO_MPU6050_PORT, GPIO_MPU6050_PIN_INT_PIN);
+            }
+            #endif
+            
+            // 检查是否是编码器中断
+            #if defined GPIO_ENCODER_PORT
+            uint32_t encoder_pins = GPIO_ENCODER_PIN_A1_PIN | GPIO_ENCODER_PIN_A2_PIN | 
+                                   GPIO_ENCODER_PIN_B1_PIN | GPIO_ENCODER_PIN_B2_PIN;
+            if (DL_GPIO_getEnabledInterruptStatus(GPIO_ENCODER_PORT, encoder_pins)) {
+                Encoder_IRQHandler();
+                // 注意：Encoder_IRQHandler内部会清除中断标志
+            }
+            #endif
+            break;
         #endif
 
         // /* VL53L0X INT */
@@ -143,5 +155,27 @@ void GROUP1_IRQHandler(void)
         //         Read_LSM6DSV16X();
         //         break;
         // #endif
+        
+        default:
+            break;
     }
+}
+
+// 定时器中断处理函数（用于速度计算和PID控制）
+void TIMA1_IRQHandler(void)
+{
+    // 先处理编码器速度计算
+    Encoder_Timer_IRQHandler();
+    
+    // 然后更新PID控制
+    MotorControl_Update();
+    
+    // // 可选：LED状态指示
+    // static uint8_t led_state = 0;
+    // if (led_state) {
+    //     DL_GPIO_clearPins(GPIO_LED_PORT, GPIO_LED_PIN_1_PIN);
+    // } else {
+    //     DL_GPIO_setPins(GPIO_LED_PORT, GPIO_LED_PIN_1_PIN);
+    // }
+    // led_state = !led_state;
 }

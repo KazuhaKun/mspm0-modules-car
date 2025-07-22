@@ -1,6 +1,7 @@
 # FIXED
 
-main.o: ../main.c \
+Drivers/Motor_Encoder_PID/Motor.o: ../Drivers/Motor_Encoder_PID/Motor.c \
+ ../Drivers/Motor_Encoder_PID/Motor.h \
  ti_msp_dl_config.h \
  C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/msp/msp.h \
  C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/DeviceFamily.h \
@@ -74,31 +75,8 @@ main.o: ../main.c \
  C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/dl_vref.h \
  C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/dl_wwdt.h \
  C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/m0p/dl_interrupt.h \
- C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/m0p/dl_systick.h \
- ../main.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MSPM0/clock.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MPU6050/mpu6050.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Software_I2C/oled_software_i2c.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Software_SPI/oled_software_spi.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Hardware_SPI/oled_hardware_spi.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Ultrasonic_Capture/ultrasonic_capture.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Ultrasonic_GPIO/ultrasonic_gpio.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/BNO08X_UART_RVC/bno08x_uart_rvc.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/WIT/wit.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_api.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_api_strings.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_def.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_device.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_types.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_platform.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_platform_log.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LSM6DSV16X/lsm6dsv16x.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/MotorControl.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Motor.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Encoder.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/PID.h
+ C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/m0p/dl_systick.h
+../Drivers/Motor_Encoder_PID/Motor.h:
 ti_msp_dl_config.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/msp/msp.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/DeviceFamily.h:
@@ -173,27 +151,3 @@ C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/dl_vref.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/dl_wwdt.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/m0p/dl_interrupt.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/m0p/dl_systick.h:
-../main.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MSPM0/clock.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MPU6050/mpu6050.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Software_I2C/oled_software_i2c.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Software_SPI/oled_software_spi.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Hardware_SPI/oled_hardware_spi.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Ultrasonic_Capture/ultrasonic_capture.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Ultrasonic_GPIO/ultrasonic_gpio.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/BNO08X_UART_RVC/bno08x_uart_rvc.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/WIT/wit.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_api.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_api_strings.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_def.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_device.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_types.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_platform.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_platform_log.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LSM6DSV16X/lsm6dsv16x.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/MotorControl.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Motor.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Encoder.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/PID.h:
