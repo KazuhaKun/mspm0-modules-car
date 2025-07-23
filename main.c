@@ -32,13 +32,16 @@
 
 #include "ti_msp_dl_config.h"
 #include "main.h"
+#include "test.h"
 
 int main(void)
 {
+    // 系统初始化
     SYSCFG_DL_init();
     SysTick_Init();
 
-    MPU6050_Init();
+    // 外设初始化
+    // MPU6050_Init();
     OLED_Init();
     // Ultrasonic_Init();
     // BNO08X_Init();
@@ -46,20 +49,15 @@ int main(void)
     // VL53L0X_Init();
     // LSM6DSV16X_Init();
 
-    MotorControl_Init();    // 初始化电机控制系统
+    // 测试模块初始化
+    // Test_Init();
     
-    // 设置双电机PID参数
-    MotorControl_SetPIDParams_All(2.6f, 1.3f, 0.0f);    // 设置所有电机PID参数
-    
-    // 使能双电机PID控制
-    MotorControl_EnablePID_All();    // 使能所有电机PID控制
-    
-    // 设置双电机目标速度
-    MotorControl_SetTargetSpeed_Dual(100.0f, 100.0f);    // 左右电机都设置为100脉冲每秒
+    // 开始双电机测试
+    // Test_DualMotorStart();
 
-
+    // 主循环
     while (1) 
     {
-        
+        // Test_DualMotorLoop();    //双电机测试
     }
 }

@@ -5,4 +5,5 @@
 	<activeTargetConfiguration value="targetConfigs/MSPM0G3507.ccxml"/>
 	<origin value="D:/Desktop/Code资料/电赛归档/mspm0-modules-main/Template"/>
 	<deviceFamily value="TMS470"/>
+	<isTargetConfigurationManual value="false"/>
 </projectOptions>

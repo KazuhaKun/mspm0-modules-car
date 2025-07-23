@@ -147,10 +147,16 @@ mspm0-modules-car.out
 EXE_OUTPUTS__QUOTED += \
 "mspm0-modules-car.out" 
 
+BIN_OUTPUTS += \
+mspm0-modules-car.txt 
+
+BIN_OUTPUTS__QUOTED += \
+"mspm0-modules-car.txt" 
+
 
 # All Target
 all: $(OBJS) $(GEN_CMDS)
-	@$(MAKE) --no-print-directory -Onone "mspm0-modules-car.out"
+	@$(MAKE) --no-print-directory -Onone "mspm0-modules-car.out" secondary-outputs
 
 # Tool invocations
 mspm0-modules-car.out: $(OBJS) $(GEN_CMDS)
@@ -160,13 +166,22 @@ mspm0-modules-car.out: $(OBJS) $(GEN_CMDS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
+mspm0-modules-car.txt: $(EXE_OUTPUTS)
+	@echo 'Building secondary target: "$@"'
+	@echo 'Invoking: Arm Hex Utility'
+	"C:/ti/ccs2020/ccs/tools/compiler/ti-cgt-armllvm_4.0.3.LTS/bin/tiarmhex.exe" --memwidth=8 --romwidth=8 --diag_wrap=off --ti_txt -o "mspm0-modules-car.txt" $(EXE_OUTPUTS__QUOTED)
+	@echo 'Finished building secondary target: "$@"'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) $(GEN_MISC_FILES__QUOTED)$(GEN_FILES__QUOTED)$(EXE_OUTPUTS__QUOTED)
+	-$(RM) $(GEN_MISC_FILES__QUOTED)$(BIN_OUTPUTS__QUOTED)$(GEN_FILES__QUOTED)$(EXE_OUTPUTS__QUOTED)
 	-$(RM) "main.o" "ti_msp_dl_config.o" "startup_mspm0g350x_ticlang.o" "Drivers\MPU6050\inv_mpu.o" "Drivers\MPU6050\inv_mpu_dmp_motion_driver.o" "Drivers\MPU6050\mpu6050.o" "Drivers\MPU6050\mspm0_i2c.o" "Drivers\MSPM0\clock.o" "Drivers\MSPM0\interrupt.o" "Drivers\Motor_Encoder_PID\Encoder.o" "Drivers\Motor_Encoder_PID\Motor.o" "Drivers\Motor_Encoder_PID\MotorControl.o" "Drivers\Motor_Encoder_PID\PID.o" "Drivers\OLED_Hardware_I2C\oled_hardware_i2c.o" 
 	-$(RM) "main.d" "ti_msp_dl_config.d" "startup_mspm0g350x_ticlang.d" "Drivers\MPU6050\inv_mpu.d" "Drivers\MPU6050\inv_mpu_dmp_motion_driver.d" "Drivers\MPU6050\mpu6050.d" "Drivers\MPU6050\mspm0_i2c.d" "Drivers\MSPM0\clock.d" "Drivers\MSPM0\interrupt.d" "Drivers\Motor_Encoder_PID\Encoder.d" "Drivers\Motor_Encoder_PID\Motor.d" "Drivers\Motor_Encoder_PID\MotorControl.d" "Drivers\Motor_Encoder_PID\PID.d" "Drivers\OLED_Hardware_I2C\oled_hardware_i2c.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
+
+secondary-outputs: $(BIN_OUTPUTS)
 
 .PHONY: all clean dependents
 .SECONDARY:
