@@ -1,0 +1,208 @@
+/*
+ * linetracker_test.c
+ *
+ * 循迹传感器测试程序
+ * 演示如何使用循迹传感器进行巡线控制
+ */
+
+#include "linetracker.h"
+#include "../OLED_Hardware_I2C/oled_hardware_i2c.h"
+#include "../MSPM0/clock.h"
+#include <stdio.h>
+
+// 循迹控制参数
+#define LINE_FOLLOW_BASE_SPEED      50      // 基础速度
+#define LINE_FOLLOW_MAX_SPEED       80      // 最大速度
+#define LINE_FOLLOW_MIN_SPEED       20      // 最小速度
+#define LINE_FOLLOW_KP              2.0f    // 比例系数
+
+/**
+ * @brief 初始化循迹测试
+ */
+void LineTracker_TestInit(void)
+{
+    // 初始化循迹传感器
+    LineTracker_Init();
+    
+    // 显示初始化信息
+    OLED_Clear();
+    OLED_ShowString(0, 0, (uint8_t*)"LineTracker", 16);
+    OLED_ShowString(0, 2, (uint8_t*)"Test Init", 16);
+    mspm0_delay_ms(2000);
+    
+    printf("循迹传感器测试初始化完成\n");
+}
+
+/**
+ * @brief 循迹测试主循环
+ */
+void LineTracker_TestLoop(void)
+{
+    static unsigned long lastPrintTime = 0;
+    unsigned long currentTime;
+    
+    // 获取当前时间
+    mspm0_get_clock_ms(&currentTime);
+    
+    // 读取传感器数据
+    LineTracker_ReadSensors();
+    
+    // 每500ms打印一次状态和显示
+    if (currentTime - lastPrintTime > 500) {
+        // LineTracker_PrintStatus();     // 调试功能已注释
+        // LineTracker_DebugGPIO();       // 调试功能已注释
+        LineTracker_DisplayOnOLED();
+        lastPrintTime = currentTime;
+    }
+    
+    // 执行循迹控制
+    LineTracker_PerformLineFollowing();
+    
+    mspm0_delay_ms(100);  // 100ms更新一次
+}
+
+/**
+ * @brief 在OLED上显示循迹状态
+ */
+void LineTracker_DisplayOnOLED(void)
+{
+    char buffer[32];
+    uint8_t i;
+    
+    // 清屏
+    OLED_Clear();
+    
+    // 显示标题
+    OLED_ShowString(0, 0, (uint8_t*)"LineTracker", 16);
+    
+    // 显示传感器状态
+    OLED_ShowString(0, 2, (uint8_t*)"Sensors:", 12);
+    for (i = 0; i < LINE_SENSOR_COUNT; i++) {
+        sprintf(buffer, "%d", g_lineTracker.sensorValue[i]);
+        OLED_ShowString(64 + i * 8, 2, (uint8_t*)buffer, 12);
+    }
+    
+    // 显示位置
+    sprintf(buffer, "Pos: %d", g_lineTracker.linePosition);
+    OLED_ShowString(0, 4, (uint8_t*)buffer, 12);
+    
+    // 显示状态
+    const char* stateStr;
+    switch (g_lineTracker.lineState) {
+        case LINE_STATE_ON_LINE:    stateStr = "ON_LINE"; break;
+        case LINE_STATE_LEFT_TURN:  stateStr = "LEFT"; break;
+        case LINE_STATE_RIGHT_TURN: stateStr = "RIGHT"; break;
+        case LINE_STATE_SHARP_LEFT: stateStr = "S_LEFT"; break;
+        case LINE_STATE_SHARP_RIGHT:stateStr = "S_RIGHT"; break;
+        case LINE_STATE_NO_LINE:    stateStr = "NO_LINE"; break;
+        case LINE_STATE_ALL_LINE:   stateStr = "ALL_LINE"; break;
+        default:                    stateStr = "UNKNOWN"; break;
+    }
+    OLED_ShowString(0, 6, (uint8_t*)stateStr, 12);
+    
+    // 显示位图 - 由于只有4行，将位图信息与激活传感器数量合并显示
+    sprintf(buffer, "0x%02X A:%d", g_lineTracker.sensorBits, g_lineTracker.activeSensorCount);
+    OLED_ShowString(64, 4, (uint8_t*)buffer, 12);
+}
+
+/**
+ * @brief 执行循迹控制逻辑
+ */
+void LineTracker_PerformLineFollowing(void)
+{
+    int16_t leftSpeed, rightSpeed;
+    int16_t position = g_lineTracker.linePosition;
+    
+    // 基于位置偏差计算速度调整
+    int16_t speedDiff = (int16_t)(LINE_FOLLOW_KP * position);
+    
+    // 计算左右轮速度
+    leftSpeed = LINE_FOLLOW_BASE_SPEED - speedDiff;
+    rightSpeed = LINE_FOLLOW_BASE_SPEED + speedDiff;
+    
+    // 速度限制
+    if (leftSpeed > LINE_FOLLOW_MAX_SPEED) leftSpeed = LINE_FOLLOW_MAX_SPEED;
+    if (leftSpeed < -LINE_FOLLOW_MAX_SPEED) leftSpeed = -LINE_FOLLOW_MAX_SPEED;
+    if (rightSpeed > LINE_FOLLOW_MAX_SPEED) rightSpeed = LINE_FOLLOW_MAX_SPEED;
+    if (rightSpeed < -LINE_FOLLOW_MAX_SPEED) rightSpeed = -LINE_FOLLOW_MAX_SPEED;
+    
+    // 根据线状态调整控制策略
+    switch (g_lineTracker.lineState) {
+        case LINE_STATE_ON_LINE:
+            // 正常巡线，使用计算出的速度
+            break;
+            
+        case LINE_STATE_LEFT_TURN:
+            // 左转，减少左轮速度
+            leftSpeed = LINE_FOLLOW_MIN_SPEED;
+            rightSpeed = LINE_FOLLOW_BASE_SPEED;
+            break;
+            
+        case LINE_STATE_RIGHT_TURN:
+            // 右转，减少右轮速度
+            leftSpeed = LINE_FOLLOW_BASE_SPEED;
+            rightSpeed = LINE_FOLLOW_MIN_SPEED;
+            break;
+            
+        case LINE_STATE_SHARP_LEFT:
+            // 急转左，左轮反转
+            leftSpeed = -LINE_FOLLOW_MIN_SPEED;
+            rightSpeed = LINE_FOLLOW_BASE_SPEED;
+            break;
+            
+        case LINE_STATE_SHARP_RIGHT:
+            // 急转右，右轮反转
+            leftSpeed = LINE_FOLLOW_BASE_SPEED;
+            rightSpeed = -LINE_FOLLOW_MIN_SPEED;
+            break;
+            
+        case LINE_STATE_NO_LINE:
+            // 没有检测到线，停止或搜索
+            leftSpeed = 0;
+            rightSpeed = 0;
+            break;
+            
+        case LINE_STATE_ALL_LINE:
+            // 检测到所有线，可能是十字路口或终点
+            leftSpeed = LINE_FOLLOW_MIN_SPEED;
+            rightSpeed = LINE_FOLLOW_MIN_SPEED;
+            break;
+            
+        default:
+            // 未知状态，停止
+            leftSpeed = 0;
+            rightSpeed = 0;
+            break;
+    }
+    
+    // 这里应该调用电机控制函数
+    // Motor_SetSpeed(MOTOR_LEFT, leftSpeed);
+    // Motor_SetSpeed(MOTOR_RIGHT, rightSpeed);
+    
+    printf("循迹控制: 左轮=%d, 右轮=%d, 位置=%d\n", leftSpeed, rightSpeed, position);
+}
+
+/* ======================== 调试功能（已注释） ======================== */
+
+/*
+ * @brief 循迹传感器单独测试
+ */
+/*
+void LineTracker_IndividualSensorTest(void)
+{
+    uint8_t i;
+    
+    printf("=== 循迹传感器单独测试 ===\n");
+    
+    for (i = 0; i < LINE_SENSOR_COUNT; i++) {
+        uint8_t value = LineTracker_GetSensorValue(i);
+        printf("传感器 %d: %s (值=%d)\n", i, value ? "检测到线" : "背景", value);
+    }
+    
+    printf("传感器位图: 0x%02X\n", LineTracker_GetSensorBits());
+    printf("激活传感器数: %d\n", LineTracker_GetActiveSensorCount());
+    printf("线位置: %d\n", LineTracker_GetLinePosition());
+    printf("检测到线: %s\n", LineTracker_IsLineDetected() ? "是" : "否");
+    printf("========================\n");
+}
+*/

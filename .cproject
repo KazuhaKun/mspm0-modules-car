@@ -49,6 +49,8 @@
                                     <listOptionValue value="${SYSCONFIG_TOOL_INCLUDE_PATH}"/>
                                     <listOptionValue value="${PROJECT_ROOT}/Drivers/LSM6DSV16X"/>
                                     <listOptionValue value="${PROJECT_ROOT}/Drivers/VL53L0X"/>
+                                    <listOptionValue value="${PROJECT_ROOT}/Drivers/LineTracker"/>
+                                    <listOptionValue value="${PROJECT_ROOT}/Test"/>
                                     <listOptionValue value="${PROJECT_ROOT}/Drivers/Motor_Encoder_PID"/>
                                     <listOptionValue value="${PROJECT_ROOT}/Drivers/WIT"/>
                                     <listOptionValue value="${PROJECT_ROOT}/Drivers/BNO08X_UART_RVC"/>

@@ -51,6 +51,7 @@ int main(void)
 
     // 测试模块初始化
     // Test_Init();
+    // Test_LineTrackerInit();     // 循迹测试初始化
     
     // 开始双电机测试
     // Test_DualMotorStart();
@@ -59,5 +60,6 @@ int main(void)
     while (1) 
     {
         // Test_DualMotorLoop();    //双电机测试
+        // Test_LineTrackerLoop();  //循迹传感器测试
     }
 }

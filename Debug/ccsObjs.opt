@@ -1,6 +1,8 @@
 "./main.o"
 "./ti_msp_dl_config.o"
 "./startup_mspm0g350x_ticlang.o"
+"./Drivers/LineTracker/linetracker.o"
+"./Drivers/LineTracker/linetracker_test.o"
 "./Drivers/MPU6050/inv_mpu.o"
 "./Drivers/MPU6050/inv_mpu_dmp_motion_driver.o"
 "./Drivers/MPU6050/mpu6050.o"
@@ -12,6 +14,7 @@
 "./Drivers/Motor_Encoder_PID/MotorControl.o"
 "./Drivers/Motor_Encoder_PID/PID.o"
 "./Drivers/OLED_Hardware_I2C/oled_hardware_i2c.o"
+"./Test/test.o"
 -l"./device_linker.cmd"
 -ldevice.cmd.genlibs
 -llibc.a

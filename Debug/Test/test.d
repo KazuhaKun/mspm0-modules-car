@@ -1,6 +1,10 @@
 # FIXED
 
-main.o: ../main.c \
+Test/test.o: ../Test/test.c ../Test/test.h \
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/main.h \
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MSPM0/clock.h \
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MPU6050/mpu6050.h \
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Software_I2C/oled_software_i2c.h \
  ti_msp_dl_config.h \
  C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/msp/msp.h \
  C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/DeviceFamily.h \
@@ -75,10 +79,6 @@ main.o: ../main.c \
  C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/dl_wwdt.h \
  C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/m0p/dl_interrupt.h \
  C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/m0p/dl_systick.h \
- ../main.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MSPM0/clock.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MPU6050/mpu6050.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Software_I2C/oled_software_i2c.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Software_SPI/oled_software_spi.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Hardware_SPI/oled_hardware_spi.h \
@@ -99,8 +99,12 @@ main.o: ../main.c \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Motor.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Encoder.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/PID.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/linetracker.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Test/test.h
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/linetracker.h
+../Test/test.h:
+C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/main.h:
+C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MSPM0/clock.h:
+C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MPU6050/mpu6050.h:
+C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Software_I2C/oled_software_i2c.h:
 ti_msp_dl_config.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/msp/msp.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/DeviceFamily.h:
@@ -175,10 +179,6 @@ C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/dl_vref.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/dl_wwdt.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/m0p/dl_interrupt.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/driverlib/m0p/dl_systick.h:
-../main.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MSPM0/clock.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MPU6050/mpu6050.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Software_I2C/oled_software_i2c.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Software_SPI/oled_software_spi.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Hardware_SPI/oled_hardware_spi.h:
@@ -200,4 +200,3 @@ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/M
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Encoder.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/PID.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/linetracker.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Test/test.h:

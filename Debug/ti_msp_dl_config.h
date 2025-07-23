@@ -186,26 +186,26 @@ extern "C" {
 #define GPIO_TRM_PIN_OUT1_PORT                                           (GPIOB)
 #define GPIO_TRM_PIN_OUT1_PIN                                   (DL_GPIO_PIN_19)
 #define GPIO_TRM_PIN_OUT1_IOMUX                                  (IOMUX_PINCM45)
-/* Defines for PIN_OUT2: GPIOB.18 with pinCMx 44 on package pin 15 */
+/* Defines for PIN_OUT2: GPIOB.17 with pinCMx 43 on package pin 14 */
 #define GPIO_TRM_PIN_OUT2_PORT                                           (GPIOB)
-#define GPIO_TRM_PIN_OUT2_PIN                                   (DL_GPIO_PIN_18)
-#define GPIO_TRM_PIN_OUT2_IOMUX                                  (IOMUX_PINCM44)
-/* Defines for PIN_OUT3: GPIOB.17 with pinCMx 43 on package pin 14 */
-#define GPIO_TRM_PIN_OUT3_PORT                                           (GPIOB)
-#define GPIO_TRM_PIN_OUT3_PIN                                   (DL_GPIO_PIN_17)
-#define GPIO_TRM_PIN_OUT3_IOMUX                                  (IOMUX_PINCM43)
-/* Defines for PIN_OUT4: GPIOA.16 with pinCMx 38 on package pin 9 */
+#define GPIO_TRM_PIN_OUT2_PIN                                   (DL_GPIO_PIN_17)
+#define GPIO_TRM_PIN_OUT2_IOMUX                                  (IOMUX_PINCM43)
+/* Defines for PIN_OUT3: GPIOA.16 with pinCMx 38 on package pin 9 */
+#define GPIO_TRM_PIN_OUT3_PORT                                           (GPIOA)
+#define GPIO_TRM_PIN_OUT3_PIN                                   (DL_GPIO_PIN_16)
+#define GPIO_TRM_PIN_OUT3_IOMUX                                  (IOMUX_PINCM38)
+/* Defines for PIN_OUT4: GPIOA.14 with pinCMx 36 on package pin 7 */
 #define GPIO_TRM_PIN_OUT4_PORT                                           (GPIOA)
-#define GPIO_TRM_PIN_OUT4_PIN                                   (DL_GPIO_PIN_16)
-#define GPIO_TRM_PIN_OUT4_IOMUX                                  (IOMUX_PINCM38)
-/* Defines for PIN_OUT5: GPIOA.14 with pinCMx 36 on package pin 7 */
-#define GPIO_TRM_PIN_OUT5_PORT                                           (GPIOA)
-#define GPIO_TRM_PIN_OUT5_PIN                                   (DL_GPIO_PIN_14)
-#define GPIO_TRM_PIN_OUT5_IOMUX                                  (IOMUX_PINCM36)
-/* Defines for PIN_OUT6: GPIOB.20 with pinCMx 48 on package pin 19 */
+#define GPIO_TRM_PIN_OUT4_PIN                                   (DL_GPIO_PIN_14)
+#define GPIO_TRM_PIN_OUT4_IOMUX                                  (IOMUX_PINCM36)
+/* Defines for PIN_OUT5: GPIOB.20 with pinCMx 48 on package pin 19 */
+#define GPIO_TRM_PIN_OUT5_PORT                                           (GPIOB)
+#define GPIO_TRM_PIN_OUT5_PIN                                   (DL_GPIO_PIN_20)
+#define GPIO_TRM_PIN_OUT5_IOMUX                                  (IOMUX_PINCM48)
+/* Defines for PIN_OUT6: GPIOB.25 with pinCMx 56 on package pin 27 */
 #define GPIO_TRM_PIN_OUT6_PORT                                           (GPIOB)
-#define GPIO_TRM_PIN_OUT6_PIN                                   (DL_GPIO_PIN_20)
-#define GPIO_TRM_PIN_OUT6_IOMUX                                  (IOMUX_PINCM48)
+#define GPIO_TRM_PIN_OUT6_PIN                                   (DL_GPIO_PIN_25)
+#define GPIO_TRM_PIN_OUT6_IOMUX                                  (IOMUX_PINCM56)
 /* Defines for PIN_OUT7: GPIOA.25 with pinCMx 55 on package pin 26 */
 #define GPIO_TRM_PIN_OUT7_PORT                                           (GPIOA)
 #define GPIO_TRM_PIN_OUT7_PIN                                   (DL_GPIO_PIN_25)

@@ -125,8 +125,10 @@ GEN_OPTS__QUOTED :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 . \
+Drivers/LineTracker \
 Drivers/MPU6050 \
 Drivers/MSPM0 \
 Drivers/Motor_Encoder_PID \
 Drivers/OLED_Hardware_I2C \
+Test \
 

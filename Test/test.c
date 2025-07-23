@@ -5,6 +5,7 @@
 #include "test.h"
 #include "main.h"
 #include "ti_msp_dl_config.h"
+#include "linetracker.h"
 
 // 全局测试数据实例
 MotorTest_t motor_test = {0};
@@ -45,8 +46,8 @@ void Test_DualMotorStart(void)
 void Test_DualMotorLoop(void)
 {
     // 定期重新确保两个电机保持满速（防止意外变化）
-    static uint32_t safety_check_time = 0;
-    uint32_t current_time;
+    static unsigned long safety_check_time = 0;
+    unsigned long current_time;
     mspm0_get_clock_ms(&current_time);
     
     if (current_time - safety_check_time > 1000) {  // 每1秒检查一次
@@ -106,4 +107,85 @@ void Test_DisplayEncoderData(void)
         OLED_ShowString(0, 6, (uint8_t*)"-", 16);
         OLED_ShowNum(8, 6, (uint32_t)(-speed_diff), 4, 16);
     }
+}
+
+// ======================== 循迹测试功能 ========================
+
+// 循迹测试初始化
+void Test_LineTrackerInit(void)
+{
+    // 初始化循迹传感器
+    LineTracker_Init();
+    
+    // 显示初始化信息
+    OLED_Clear();
+    OLED_ShowString(0, 0, (uint8_t*)"LineTracker", 16);
+    OLED_ShowString(0, 2, (uint8_t*)"Test Init", 16);
+    mspm0_delay_ms(2000);
+    
+    printf("循迹测试初始化完成\n");
+}
+
+// 循迹测试主循环
+void Test_LineTrackerLoop(void)
+{
+    // 读取传感器数据
+    LineTracker_ReadSensors();
+    
+    // 显示循迹状态
+    Test_LineTrackerDisplay();
+    
+    // 打印详细状态到串口（每500ms一次）
+    static unsigned long last_print_time = 0;
+    unsigned long current_time;
+    mspm0_get_clock_ms(&current_time);
+    
+    if (current_time - last_print_time > 500) {
+        // LineTracker_PrintStatus();    // 调试功能已注释
+        last_print_time = current_time;
+    }
+    
+    mspm0_delay_ms(100);  // 100ms更新一次
+}
+
+// 循迹状态显示
+void Test_LineTrackerDisplay(void)
+{
+    char buffer[16];
+    uint8_t i;
+    
+    OLED_Clear();
+    
+    // 第一行：标题
+    OLED_ShowString(0, 0, (uint8_t*)"LineTracker", 16);
+    
+    // 第二行：传感器状态 (7个数字)
+    for (i = 0; i < LINE_SENSOR_COUNT; i++) {
+        OLED_ShowNum(i * 16, 2, g_lineTracker.sensorValue[i], 1, 16);
+    }
+    
+    // 第三行：位置和激活数量
+    if (g_lineTracker.linePosition >= 0) {
+        OLED_ShowNum(0, 4, (uint32_t)g_lineTracker.linePosition, 3, 16);
+    } else {
+        OLED_ShowString(0, 4, (uint8_t*)"-", 16);
+        OLED_ShowNum(8, 4, (uint32_t)(-g_lineTracker.linePosition), 2, 16);
+    }
+    
+    OLED_ShowString(48, 4, (uint8_t*)"A:", 16);
+    OLED_ShowNum(64, 4, g_lineTracker.activeSensorCount, 1, 16);
+    
+    // 第四行：状态文字
+    const char* stateStr;
+    switch (g_lineTracker.lineState) {
+        case LINE_STATE_ON_LINE:    stateStr = "ON_LINE"; break;
+        case LINE_STATE_LEFT_TURN:  stateStr = "LEFT"; break;
+        case LINE_STATE_RIGHT_TURN: stateStr = "RIGHT"; break;
+        case LINE_STATE_SHARP_LEFT: stateStr = "S_LEFT"; break;
+        case LINE_STATE_SHARP_RIGHT:stateStr = "S_RIGHT"; break;
+        case LINE_STATE_NO_LINE:    stateStr = "NO_LINE"; break;
+        case LINE_STATE_ALL_LINE:   stateStr = "ALL_LINE"; break;
+        default:                    stateStr = "UNKNOWN"; break;
+    }
+    OLED_ShowString(0, 6, (uint8_t*)stateStr, 16);
 }
