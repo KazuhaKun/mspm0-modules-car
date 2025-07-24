@@ -71,12 +71,12 @@ void Motor_SetDirection(uint8_t motor_id, int8_t direction)
         // 电机B控制 (BIN1, BIN2)
         switch (direction) {
             case 1:  // 正转
-                DL_GPIO_setPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN1_PIN);
-                DL_GPIO_clearPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN2_PIN);
-                break;
-            case -1: // 反转
                 DL_GPIO_clearPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN1_PIN);
                 DL_GPIO_setPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN2_PIN);
+                break;
+            case -1: // 反转
+                DL_GPIO_setPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN1_PIN);
+                DL_GPIO_clearPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN2_PIN);
                 break;
             default: // 停止
                 DL_GPIO_clearPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN1_PIN);
