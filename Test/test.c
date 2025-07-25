@@ -6,6 +6,7 @@
 #include "main.h"
 #include "ti_msp_dl_config.h"
 #include "linetracker.h"
+#include "Encoder.h"
 
 // 全局测试数据实例
 MotorTest_t motor_test = {0};
@@ -58,7 +59,7 @@ void Test_DualMotorLoop(void)
     
     // 显示编码器数据
     Test_DisplayEncoderData();
-    mspm0_delay_ms(200);  // 每200ms更新一次显示
+    mspm0_delay_ms(100);  // 每100ms更新一次显示，与速度计算频率匹配
 }
 
 // 显示编码器数据函数
@@ -68,13 +69,23 @@ void Test_DisplayEncoderData(void)
     
     // 获取两个电机的编码器原始数据
     motor_test.left_encoder_count = MotorControl_GetEncoderCount(MOTOR_CONTROL_LEFT);
-    motor_test.left_current_speed = MotorControl_GetCurrentSpeed(MOTOR_CONTROL_LEFT);
     motor_test.right_encoder_count = MotorControl_GetEncoderCount(MOTOR_CONTROL_RIGHT);
-    motor_test.right_current_speed = MotorControl_GetCurrentSpeed(MOTOR_CONTROL_RIGHT);
     
-    // 计算转速 (基于390脉冲/转，4倍频 = 1560脉冲/转)
-    float left_rpm = (motor_test.left_current_speed / 1560.0f) * 60.0f;
-    float right_rpm = (motor_test.right_current_speed / 1560.0f) * 60.0f;
+    // 直接从编码器获取速度（更可靠）
+    motor_test.left_current_speed = Encoder_GetSpeed_PPS(MOTOR_CONTROL_LEFT);
+    motor_test.right_current_speed = Encoder_GetSpeed_PPS(MOTOR_CONTROL_RIGHT);
+    
+    // 计算转速 (基于13ppr编码器，当前配置为2倍频 = 26脉冲/转)
+    // 13ppr × 2倍频(A1+B1上升沿) = 26脉冲/转
+    // RPS = PPS / 26脉冲每转
+    float left_rps = motor_test.left_current_speed / 26.0f;
+    float right_rps = motor_test.right_current_speed / 26.0f;
+    
+    // OLED显示格式：
+    // 第一行：编码器累计计数 (左电机 | 右电机)
+    // 第二行：PPS - 脉冲每秒 (左电机 | 右电机)  
+    // 第三行：RPS - 转每秒 (左电机 | 右电机)
+    // 第四行：速度差异
     
     // 第一行：编码器累计计数 (左电机 空格 右电机)
     if (motor_test.left_encoder_count >= 0) {
@@ -91,13 +102,35 @@ void Test_DisplayEncoderData(void)
         OLED_ShowNum(72, 0, (uint32_t)(-motor_test.right_encoder_count), 4, 16);
     }
     
-    // 第二行：PPS (脉冲每秒)
-    OLED_ShowNum(0, 2, (uint32_t)motor_test.left_current_speed, 4, 16);
-    OLED_ShowNum(64, 2, (uint32_t)motor_test.right_current_speed, 4, 16);
+    // 第二行：PPS (脉冲每秒) - 处理正负值
+    if (motor_test.left_current_speed >= 0) {
+        OLED_ShowNum(0, 2, (uint32_t)motor_test.left_current_speed, 4, 16);
+    } else {
+        OLED_ShowString(0, 2, (uint8_t*)"-", 16);
+        OLED_ShowNum(8, 2, (uint32_t)(-motor_test.left_current_speed), 3, 16);
+    }
     
-    // 第三行：RPM (转每分钟)
-    OLED_ShowNum(0, 4, (uint32_t)left_rpm, 4, 16);
-    OLED_ShowNum(64, 4, (uint32_t)right_rpm, 4, 16);
+    if (motor_test.right_current_speed >= 0) {
+        OLED_ShowNum(64, 2, (uint32_t)motor_test.right_current_speed, 4, 16);
+    } else {
+        OLED_ShowString(64, 2, (uint8_t*)"-", 16);
+        OLED_ShowNum(72, 2, (uint32_t)(-motor_test.right_current_speed), 3, 16);
+    }
+    
+    // 第三行：RPS (转每秒) - 处理正负值
+    if (left_rps >= 0) {
+        OLED_ShowNum(0, 4, (uint32_t)left_rps, 3, 16);
+    } else {
+        OLED_ShowString(0, 4, (uint8_t*)"-", 16);
+        OLED_ShowNum(8, 4, (uint32_t)(-left_rps), 2, 16);
+    }
+    
+    if (right_rps >= 0) {
+        OLED_ShowNum(64, 4, (uint32_t)right_rps, 3, 16);
+    } else {
+        OLED_ShowString(64, 4, (uint8_t*)"-", 16);
+        OLED_ShowNum(72, 4, (uint32_t)(-right_rps), 2, 16);
+    }
     
     // 第四行：速度差异
     int32_t speed_diff = motor_test.left_current_speed - motor_test.right_current_speed;

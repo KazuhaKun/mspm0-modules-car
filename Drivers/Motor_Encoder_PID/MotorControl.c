@@ -148,7 +148,7 @@ void MotorControl_Update(void)
     // 更新双电机控制
     for (int i = 0; i < 2; i++) {
         // 获取当前速度
-        motor_control.motor[i].current_speed = (float)Encoder_GetSpeed(i);
+        motor_control.motor[i].current_speed = (float)Encoder_GetSpeed_PPS(i);
         
         // 如果PID控制使能，则进行PID计算
         if (motor_control.motor[i].pid_enabled) {

@@ -62,9 +62,9 @@ GPIO2.associatedPins[0].polarity          = "RISE_FALL";
 GPIO2.associatedPins[0].pin.$assign       = "PB11";
 GPIO2.associatedPins[1].$name             = "PIN_A2";
 GPIO2.associatedPins[1].direction         = "INPUT";
-GPIO2.associatedPins[1].interruptEn       = true;
 GPIO2.associatedPins[1].interruptPriority = "1";
 GPIO2.associatedPins[1].polarity          = "RISE_FALL";
+GPIO2.associatedPins[1].interruptEn       = true;
 GPIO2.associatedPins[1].pin.$assign       = "PB4";
 GPIO2.associatedPins[2].$name             = "PIN_B1";
 GPIO2.associatedPins[2].direction         = "INPUT";
@@ -74,9 +74,9 @@ GPIO2.associatedPins[2].polarity          = "RISE_FALL";
 GPIO2.associatedPins[2].pin.$assign       = "PB12";
 GPIO2.associatedPins[3].$name             = "PIN_B2";
 GPIO2.associatedPins[3].direction         = "INPUT";
-GPIO2.associatedPins[3].interruptEn       = true;
 GPIO2.associatedPins[3].interruptPriority = "1";
 GPIO2.associatedPins[3].polarity          = "RISE_FALL";
+GPIO2.associatedPins[3].interruptEn       = true;
 GPIO2.associatedPins[3].pin.$assign       = "PB5";
 
 GPIO3.$name                               = "GPIO_MPU6050";
@@ -174,11 +174,11 @@ SYSCTL.clockTreeEn           = true;
 scripting.suppress("For best practices when the CPUCLK is running at 32MHz and above, clear the flash status bit using DL_FlashCTL_executeClearStatus\\(\\) before executing any flash operation\\. Otherwise there may be false positives\\.", SYSCTL);
 
 TIMER1.$name              = "TIMER_CALC";
-TIMER1.timerPeriod        = "100 ms";
 TIMER1.timerMode          = "PERIODIC";
-TIMER1.timerClkPrescale   = 256;
 TIMER1.interrupts         = ["ZERO"];
 TIMER1.interruptPriority  = "1";
+TIMER1.timerPeriod        = "10 ms";
+TIMER1.timerClkPrescale   = 256;
 TIMER1.peripheral.$assign = "TIMA1";
 
 /**
