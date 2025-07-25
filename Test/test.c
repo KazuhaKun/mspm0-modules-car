@@ -85,7 +85,7 @@ void Test_Display_Motor_Encoder(void)
 void Test_All_Modules(void)
 {
     uint32_t tick = 0;
-    MotorControl_SetBaseSpeed(1); // 设置一个较低的基础速度用于测试
+    MotorControl_SetBaseSpeed(5); // 进一步降低基础速度用于测试，原来是20
     MotorControl_SetMode(MOTOR_MODE_LINE_FOLLOWING);
 
     while(1)
