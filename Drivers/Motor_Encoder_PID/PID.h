@@ -1,34 +1,37 @@
-#ifndef __PID_H
-#define __PID_H
+/*
+ * pid.h
+ *
+ *  通用PID控制器头文件
+ */
+
+#ifndef PID_H_
+#define PID_H_
 
 #include <stdint.h>
 
-// PID结构体定义
+// PID控制器结构体
 typedef struct {
-    float Kp, Ki, Kd;          // PID参数
-    float error;               // 当前误差
-    float last_error;          // 上次误差
-    float output;              // 输出值
-    float max_output;          // 输出限幅最大值
-    float min_output;          // 输出限幅最小值
-} PID_TypeDef;
+    float Kp;                   // 比例增益
+    float Ki;                   // 积分增益
+    float Kd;                   // 微分增益
 
-// PID控制函数
-void PID_Init(uint8_t motor_id, float kp, float ki, float kd);           // 初始化PID参数
-void PID_SetParams(uint8_t motor_id, float kp, float ki, float kd);      // 设置PID参数
-void PID_SetOutputLimit(uint8_t motor_id, float min_out, float max_out); // 设置输出限幅
-float PID_Calculate(uint8_t motor_id, float target, float current);      // PID计算
-void PID_Reset(uint8_t motor_id);                                        // 重置PID状态
+    float target;               // 目标值
+    float actual;               // 实际值
 
-// 兼容旧接口（保持向后兼容）
-int Velocity_A(float Target, float Current);
-int Velocity_B(float Target, float Current);
-void PID_SetParams_Global(float kp, float ki, float kd);
+    float error;                // 当前误差
+    float last_error;           // 上一次误差
+    float integral;             // 积分累计值
 
-// 宏定义
-#define PID_MOTOR_A      0                    // 电机A ID
-#define PID_MOTOR_B      1                    // 电机B ID
-#define PID_DEFAULT_MAX  100.0f               // 默认输出最大值
-#define PID_DEFAULT_MIN  -100.0f              // 默认输出最小值
+    float output;               // PID输出
 
-#endif
+    float integral_limit;       // 积分限幅
+    float output_limit;         // 输出限幅
+
+} PID_Controller_t;
+
+void PID_Init(PID_Controller_t *pid, float Kp, float Ki, float Kd, float integral_limit, float output_limit);
+void PID_SetTarget(PID_Controller_t *pid, float target);
+float PID_Calculate(PID_Controller_t *pid, float actual);
+void PID_Reset(PID_Controller_t *pid);
+
+#endif /* PID_H_ */

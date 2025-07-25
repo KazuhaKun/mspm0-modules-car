@@ -41,25 +41,32 @@ int main(void)
     SysTick_Init();
 
     // 外设初始化
-    // MPU6050_Init();
+    MPU6050_Init();
     OLED_Init();
     // Ultrasonic_Init();
     // BNO08X_Init();
     // WIT_Init();
     // VL53L0X_Init();
     // LSM6DSV16X_Init();
+    LineTracker_Init();
+    MotorControl_Init(); // 此函数会初始化电机、编码器和所有PID控制器
 
-    // 测试模块初始化
-    Test_Init();
-    // Test_LineTrackerInit();     // 循迹测试初始化
-    
-    // 开始双电机测试
-    Test_DualMotorStart();
+    // 3. 在OLED上显示启动信息
+    OLED_Clear();
+    OLED_ShowString(0, 0, (uint8_t*)"All modules", 16);
+    OLED_ShowString(0, 2, (uint8_t*)"initialized.", 16);
+    OLED_ShowString(0, 4, (uint8_t*)"Starting test...", 16);
+    delay_ms(2000); // 等待2秒
+
+    // 4. 调用综合测试函数
+    // 这个函数包含一个无限循环，会接管程序的所有测试和显示任务
+    Test_All_Modules();
+
 
     // 主循环
     while (1) 
     {
-        Test_DualMotorLoop();    //双电机测试
+        // Test_DualMotorLoop();    //双电机测试
         // Test_LineTrackerLoop();  //循迹传感器测试
     }
 }

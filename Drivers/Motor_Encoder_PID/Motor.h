@@ -25,4 +25,17 @@ void Motor_Run(uint8_t motor_id, float speed);
  */
 void Motor_Stop(uint8_t motor_id);
 
+/**
+ * @brief 设置双电机PWM
+ * 
+ * @param pwm_L 左电机PWM值 (-100.0 到 100.0)
+ * @param pwm_R 右电机PWM值 (-100.0 到 100.0)
+ */
+void Motor_Set_Pwm(float pwm_L, float pwm_R);
+
+// 电机ID定义
+#define MOTOR_A      0      // 电机A的ID
+#define MOTOR_B      1      // 电机B的ID
+#define MOTOR_ALL    2      // 代表两个电机
+
 #endif // __MOTOR_H

@@ -144,12 +144,12 @@ static void Motor_SetDirection(uint8_t motor_id, int8_t direction)
     } else if (motor_id == MOTOR_B) {
         switch (direction) {
             case 1:  // 正转
-                DL_GPIO_setPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN1_PIN);
-                DL_GPIO_clearPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN2_PIN);
-                break;
-            case -1: // 反转
                 DL_GPIO_clearPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN1_PIN);
                 DL_GPIO_setPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN2_PIN);
+                break;
+            case -1: // 反转
+                DL_GPIO_setPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN1_PIN);
+                DL_GPIO_clearPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN2_PIN);
                 break;
             default: // 停止
                 DL_GPIO_clearPins(GPIO_MOTOR_PORT, GPIO_MOTOR_PIN_BIN1_PIN | GPIO_MOTOR_PIN_BIN2_PIN);
@@ -182,4 +182,21 @@ static void Motor_SetPWM(uint8_t motor_id, float duty)
     } else if (motor_id == MOTOR_B) {
         DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, pwm_value, DL_TIMER_CC_1_INDEX);
     }
+}
+
+/**
+ * @brief 设置双电机PWM
+ * 
+ * @param pwm_L 左电机PWM值 (-100.0 到 100.0)
+ * @param pwm_R 右电机PWM值 (-100.0 到 100.0)
+ */
+void Motor_Set_Pwm(float pwm_L, float pwm_R)
+{
+    // 将PWM值从-100~100范围转换为-1.0~1.0范围
+    float speed_L = pwm_L / 100.0f;
+    float speed_R = pwm_R / 100.0f;
+    
+    // 调用现有的Motor_Run函数
+    Motor_Run(MOTOR_A, speed_L);
+    Motor_Run(MOTOR_B, speed_R);
 }

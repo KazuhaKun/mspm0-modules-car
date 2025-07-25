@@ -6,7 +6,7 @@
 #include "wit.h"
 #include "vl53l0x.h"
 #include "lsm6dsv16x.h"
-#include "MotorControl.h"
+#include "motor_control.h"
 
 
 void SysTick_Handler(void)

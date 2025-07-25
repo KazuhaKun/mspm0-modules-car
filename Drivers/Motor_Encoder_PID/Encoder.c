@@ -172,3 +172,21 @@ void Encoder_Timer_IRQHandler(void)
     // 清除定时器中断标志
     DL_TimerA_clearInterruptStatus(TIMER_CALC_INST, DL_TIMER_INTERRUPT_ZERO_EVENT);
 }
+
+/**
+ * @brief 获取左电机速度
+ * @return 左电机速度 (每秒脉冲数)
+ */
+int16_t Encoder_Get_Speed_L(void)
+{
+    return (int16_t)Encoder_GetSpeed_PPS(0); // 0 表示左电机
+}
+
+/**
+ * @brief 获取右电机速度
+ * @return 右电机速度 (每秒脉冲数)
+ */
+int16_t Encoder_Get_Speed_R(void)
+{
+    return (int16_t)Encoder_GetSpeed_PPS(1); // 1 表示右电机
+}

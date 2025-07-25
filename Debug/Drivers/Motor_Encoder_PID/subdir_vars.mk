@@ -8,37 +8,37 @@ SHELL = cmd.exe
 C_SRCS += \
 ../Drivers/Motor_Encoder_PID/Encoder.c \
 ../Drivers/Motor_Encoder_PID/Motor.c \
-../Drivers/Motor_Encoder_PID/MotorControl.c \
-../Drivers/Motor_Encoder_PID/PID.c 
+../Drivers/Motor_Encoder_PID/motor_control.c \
+../Drivers/Motor_Encoder_PID/pid.c 
 
 C_DEPS += \
 ./Drivers/Motor_Encoder_PID/Encoder.d \
 ./Drivers/Motor_Encoder_PID/Motor.d \
-./Drivers/Motor_Encoder_PID/MotorControl.d \
-./Drivers/Motor_Encoder_PID/PID.d 
+./Drivers/Motor_Encoder_PID/motor_control.d \
+./Drivers/Motor_Encoder_PID/pid.d 
 
 OBJS += \
 ./Drivers/Motor_Encoder_PID/Encoder.o \
 ./Drivers/Motor_Encoder_PID/Motor.o \
-./Drivers/Motor_Encoder_PID/MotorControl.o \
-./Drivers/Motor_Encoder_PID/PID.o 
+./Drivers/Motor_Encoder_PID/motor_control.o \
+./Drivers/Motor_Encoder_PID/pid.o 
 
 OBJS__QUOTED += \
 "Drivers\Motor_Encoder_PID\Encoder.o" \
 "Drivers\Motor_Encoder_PID\Motor.o" \
-"Drivers\Motor_Encoder_PID\MotorControl.o" \
-"Drivers\Motor_Encoder_PID\PID.o" 
+"Drivers\Motor_Encoder_PID\motor_control.o" \
+"Drivers\Motor_Encoder_PID\pid.o" 
 
 C_DEPS__QUOTED += \
 "Drivers\Motor_Encoder_PID\Encoder.d" \
 "Drivers\Motor_Encoder_PID\Motor.d" \
-"Drivers\Motor_Encoder_PID\MotorControl.d" \
-"Drivers\Motor_Encoder_PID\PID.d" 
+"Drivers\Motor_Encoder_PID\motor_control.d" \
+"Drivers\Motor_Encoder_PID\pid.d" 
 
 C_SRCS__QUOTED += \
 "../Drivers/Motor_Encoder_PID/Encoder.c" \
 "../Drivers/Motor_Encoder_PID/Motor.c" \
-"../Drivers/Motor_Encoder_PID/MotorControl.c" \
-"../Drivers/Motor_Encoder_PID/PID.c" 
+"../Drivers/Motor_Encoder_PID/motor_control.c" \
+"../Drivers/Motor_Encoder_PID/pid.c" 
 
 

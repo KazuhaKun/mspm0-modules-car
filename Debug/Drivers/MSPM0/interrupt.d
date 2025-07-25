@@ -88,10 +88,10 @@ Drivers/MSPM0/interrupt.o: ../Drivers/MSPM0/interrupt.c \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_platform.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_platform_log.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LSM6DSV16X/lsm6dsv16x.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/MotorControl.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Motor.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Encoder.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/PID.h
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/motor_control.h \
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/pid.h \
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/linetracker.h \
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Motor.h
 ti_msp_dl_config.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/msp/msp.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/DeviceFamily.h:
@@ -180,7 +180,7 @@ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_typ
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_platform.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/VL53L0X/vl53l0x_platform_log.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LSM6DSV16X/lsm6dsv16x.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/MotorControl.h:
+C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/motor_control.h:
+C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/pid.h:
+C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/linetracker.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Motor.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Encoder.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/PID.h:
