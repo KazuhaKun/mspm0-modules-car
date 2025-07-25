@@ -65,33 +65,12 @@ float PID_Calculate(PID_Controller_t *pid, float actual)
                   pid->Ki * pid->integral +
                   pid->Kd * (pid->error - pid->last_error);
 
-    // // 输出限幅
-    // if (pid->output > pid->output_limit) {
-    //     pid->output = pid->output_limit;
-    // } else if (pid->output < -pid->output_limit) {
-    //     pid->output = -pid->output_limit;
-    // }
-
-
-// ==================== 新增逻辑：抗积分饱和 (Anti-Windup) ====================
-    float output_real = pid->output; // 保存未经限制的原始输出
-
-    // 1. 对输出进行限幅
+    // 输出限幅
     if (pid->output > pid->output_limit) {
         pid->output = pid->output_limit;
     } else if (pid->output < -pid->output_limit) {
         pid->output = -pid->output_limit;
     }
-
-    // 2. 计算输出偏差 (原始输出与限幅后输出的差值)
-    float output_error = output_real - pid->output;
-
-    // 3. 如果发生了限幅 (output_error不为0)，则反向衰减积分项
-    //    这里我们用一个简单的比例方法来衰减，防止积分持续累加
-    if (output_error != 0.0f && pid->Ki != 0.0f) {
-        pid->integral -= (output_error / pid->Ki);
-    }
-// ========================================================================
 
     pid->last_error = pid->error;
 
