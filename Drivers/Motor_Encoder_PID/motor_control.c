@@ -8,13 +8,6 @@
 #include "Encoder.h"
 #include "linetracker.h"
 
-// PID参数定义 - 优化循迹PID参数，减小响应速度避免过冲
-#define LINE_PID_KP         0.15f   // 减小比例增益，使转向更平滑
-#define LINE_PID_KI         0.0f    // 保持积分增益为0，避免积分饱和
-#define LINE_PID_KD         0.05f   // 调整微分增益，提高系统响应
-#define LINE_PID_INT_LIMIT  50.0f   // 减小积分限幅
-#define LINE_PID_OUT_LIMIT  30.0f   // 减小输出限幅，避免速度突变
-
 #define YAW_PID_KP          1.0f
 #define YAW_PID_KI          0.0f
 #define YAW_PID_KD          0.2f
@@ -32,6 +25,9 @@
 // 添加最大速度限制，防止电机跑满
 #define MAX_MOTOR_SPEED 30.0f
 
+// 添加电机平衡因子，用于补偿左右电机速度差异
+#define MOTOR_BALANCE_FACTOR 1.0f  // 根据实际测试调整，>1.0右电机更快，<1.0左电机更快
+
 Motor_Control_t g_motorControl;
 
 /**
@@ -44,14 +40,13 @@ void MotorControl_Init(void)
     Encoder_Init();
 
     // 初始化PID控制器
-    PID_Init(&g_motorControl.line_pid, LINE_PID_KP, LINE_PID_KI, LINE_PID_KD, LINE_PID_INT_LIMIT, LINE_PID_OUT_LIMIT);
     PID_Init(&g_motorControl.yaw_pid, YAW_PID_KP, YAW_PID_KI, YAW_PID_KD, YAW_PID_INT_LIMIT, YAW_PID_OUT_LIMIT);
     PID_Init(&g_motorControl.speed_pid_L, SPEED_PID_KP, SPEED_PID_KI, SPEED_PID_KD, SPEED_PID_INT_LIMIT, SPEED_PID_OUT_LIMIT);
     PID_Init(&g_motorControl.speed_pid_R, SPEED_PID_KP, SPEED_PID_KI, SPEED_PID_KD, SPEED_PID_INT_LIMIT, SPEED_PID_OUT_LIMIT);
 
     // 设置初始状态
     g_motorControl.mode = MOTOR_MODE_STOP;
-    g_motorControl.base_speed = 30.0f; // 降低默认基础速度，避免过快
+    g_motorControl.base_speed = 20.0f; // 降低默认基础速度，避免过快
     g_motorControl.target_yaw = 0.0f;
 }
 
@@ -97,49 +92,20 @@ void MotorControl_SetTargetYaw(float yaw)
  */
 void MotorControl_Update(void)
 {
-    float line_correction = 0;
     float yaw_correction = 0;
     float left_speed_target = 0;
     float right_speed_target = 0;
 
     switch (g_motorControl.mode) {
-        case MOTOR_MODE_LINE_FOLLOWING:
-            // 循迹模式
-            LineTracker_ReadSensors();
-            PID_SetTarget(&g_motorControl.line_pid, 0); // 目标是线位置为0
-            
-            // 特殊处理：当检测到极端情况（只有最边上的传感器有信号）时，限制修正值
-            if ((g_lineTracker.sensorBits == 0b0000001) || (g_lineTracker.sensorBits == 0b1000000)) {
-                // 只有最边缘的传感器检测到线，限制修正值避免急转
-                if (g_lineTracker.sensorBits == 0b0000001) {
-                    line_correction = -15.0f; // 限制左转修正
-                } else {
-                    line_correction = 15.0f;  // 限制右转修正
-                }
-            } else {
-                // 正常情况下使用PID计算
-                line_correction = PID_Calculate(&g_motorControl.line_pid, g_lineTracker.linePosition);
-            }
-
-            left_speed_target = g_motorControl.base_speed - line_correction;
-            right_speed_target = g_motorControl.base_speed + line_correction;
-            
-            // 限制速度目标值，避免过大
-            if (left_speed_target > MAX_MOTOR_SPEED) left_speed_target = MAX_MOTOR_SPEED;
-            if (left_speed_target < -MAX_MOTOR_SPEED) left_speed_target = -MAX_MOTOR_SPEED;
-            if (right_speed_target > MAX_MOTOR_SPEED) right_speed_target = MAX_MOTOR_SPEED;
-            if (right_speed_target < -MAX_MOTOR_SPEED) right_speed_target = -MAX_MOTOR_SPEED;
-            break;
-
         case MOTOR_MODE_YAW_CORRECTION:
             // Yaw角闭环模式
             // 获取当前MPU6050的yaw值 (这里假设有一个全局变量或函数获取当前yaw)
             // 暂时使用一个临时值，实际应该从MPU6050获取
-            float current_yaw = 0.0f; // TODO: 替换为实际的yaw获取函数
-            yaw_correction = PID_Calculate(&g_motorControl.yaw_pid, current_yaw);
+            yaw_correction = PID_Calculate(&g_motorControl.yaw_pid, yaw);
 
             left_speed_target = g_motorControl.base_speed - yaw_correction;
-            right_speed_target = g_motorControl.base_speed + yaw_correction;
+            // 应用电机平衡因子到右电机
+            right_speed_target = (g_motorControl.base_speed + yaw_correction) * MOTOR_BALANCE_FACTOR;
             
             // 限制速度目标值，避免过大
             if (left_speed_target > MAX_MOTOR_SPEED) left_speed_target = MAX_MOTOR_SPEED;
@@ -150,7 +116,9 @@ void MotorControl_Update(void)
 
         case MOTOR_MODE_MANUAL:
             // 手动模式下，速度由外部直接设置，这里不处理
-            return;
+            left_speed_target = g_motorControl.base_speed;
+            right_speed_target = g_motorControl.base_speed * MOTOR_BALANCE_FACTOR;
+            break;
 
         case MOTOR_MODE_STOP:
         default:
@@ -184,7 +152,6 @@ void MotorControl_Update(void)
 void MotorControl_Stop(void)
 {
     Motor_Stop(MOTOR_ALL);
-    PID_Reset(&g_motorControl.line_pid);
     PID_Reset(&g_motorControl.yaw_pid);
     PID_Reset(&g_motorControl.speed_pid_L);
     PID_Reset(&g_motorControl.speed_pid_R);

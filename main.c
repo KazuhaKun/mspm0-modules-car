@@ -42,6 +42,7 @@ int main(void)
 
     // 外设初始化
     MPU6050_Init();
+    delay_ms(8000);
     OLED_Init();
     // Ultrasonic_Init();
     // BNO08X_Init();
@@ -58,9 +59,9 @@ int main(void)
     OLED_ShowString(0, 4, (uint8_t*)"Starting test...", 16);
     delay_ms(2000); // 等待2秒
 
-    // 4. 调用综合测试函数
+    // 4. 调用传感器检测测试函数
     // 这个函数包含一个无限循环，会接管程序的所有测试和显示任务
-    Test_All_Modules();
+    // Test_Check_Line_Sensors();
 
 
     // 主循环
@@ -68,5 +69,8 @@ int main(void)
     {
         // Test_DualMotorLoop();    //双电机测试
         // Test_LineTrackerLoop();  //循迹传感器测试
+        // Test_All_Modules();      //综合测试
+        // Test_Manual_Mode_Straight_Line(); //手动模式直线行驶测试
+        Test_Yaw_Straight_Line_With_LineTracker(); //基于Yaw角直线行驶，循迹传感器检测不到线时停车
     }
 }
