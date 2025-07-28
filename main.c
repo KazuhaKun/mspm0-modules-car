@@ -68,9 +68,9 @@ int main(void)
     while (1) 
     {
         // Test_DualMotorLoop();    //双电机测试
-        // Test_LineTrackerLoop();  //循迹传感器测试
         // Test_All_Modules();      //综合测试
         // Test_Manual_Mode_Straight_Line(); //手动模式直线行驶测试
-        Test_Yaw_Straight_Line_With_LineTracker(); //基于Yaw角直线行驶，循迹传感器检测不到线时停车
+        Test_LineTracker(); //基于7路循迹传感器的行驶测试，当循迹传感器检测不到线时停车
+        // Test_Yaw_Straight_Line_With_LineTracker(); //基于Yaw角直线行驶，循迹传感器检测不到线时停车
     }
 }

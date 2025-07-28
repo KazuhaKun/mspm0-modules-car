@@ -256,3 +256,46 @@ void Test_Yaw_Straight_Line_With_LineTracker(void)
         delay_ms(100);
     }
 }
+
+#define TEST_LINE_TRACKER_SPEED 50.0f // 线速度
+/**
+ * @brief 基于7路循迹传感器的行驶测试，当循迹传感器检测不到线时停车
+ */
+void Test_LineTracker(void)
+{
+    OLED_Clear();
+    OLED_ShowString(0, 0, (uint8_t*)"LineTracker", 16);
+    OLED_ShowString(0, 2, (uint8_t*)"Line Stop", 16);
+    delay_ms(2000);
+    OLED_Clear();
+        
+    // 设置基础速度
+    MotorControl_SetBaseSpeed(TEST_LINE_TRACKER_SPEED);
+    
+    // 设置为循迹模式
+    MotorControl_SetMode(MOTOR_MODE_LINE_FOLLOWING);
+    
+    while(1) {        
+        // 检查是否检测到线
+        if (!LineTracker_IsLineDetected()) {
+            // 没有检测到线，停车
+            MotorControl_SetMode(MOTOR_MODE_STOP);
+            
+            // 在OLED上显示状态
+            OLED_ShowString(0, 0, (uint8_t*)"No Line", 16);
+            OLED_ShowString(0, 2, (uint8_t*)"Stopped", 16);
+        } else {
+            // 检测到线，继续直行
+            if (g_motorControl.mode != MOTOR_MODE_LINE_FOLLOWING) {
+                MotorControl_SetBaseSpeed(TEST_LINE_TRACKER_SPEED);
+                MotorControl_SetMode(MOTOR_MODE_LINE_FOLLOWING);
+            }
+            
+            // 在OLED上显示状态
+            OLED_ShowString(0, 0, (uint8_t*)"Running", 16);
+            OLED_ShowString(0, 2, (uint8_t*)"Line:Yes", 16);
+        }
+        
+        delay_ms(100);
+    }
+}
