@@ -20,6 +20,7 @@ typedef struct {
 
     float error;                // 当前误差
     float last_error;           // 上一次误差
+    float prev_error;           // 上上次误差，用于微分项滤波
     float integral;             // 积分累计值
 
     float output;               // PID输出

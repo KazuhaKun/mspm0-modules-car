@@ -26,6 +26,7 @@ void PID_Init(PID_Controller_t *pid, float Kp, float Ki, float Kd, float integra
     pid->actual = 0.0f;
     pid->error = 0.0f;
     pid->last_error = 0.0f;
+    pid->prev_error = 0.0f;  // 用于微分项滤波
     pid->integral = 0.0f;
     pid->output = 0.0f;
 }
@@ -51,19 +52,32 @@ float PID_Calculate(PID_Controller_t *pid, float actual)
     pid->actual = actual;
     pid->error = pid->target - pid->actual;
 
-    // 积分项
-    pid->integral += pid->error;
+    // 积分项计算和抗积分饱和处理
+    // 只有在输出未饱和时才累加积分项，或者误差与输出同方向时才累加
+    float integral_temp = pid->integral + pid->error;
+    
     // 积分限幅
-    if (pid->integral > pid->integral_limit) {
-        pid->integral = pid->integral_limit;
-    } else if (pid->integral < -pid->integral_limit) {
-        pid->integral = -pid->integral_limit;
+    if (integral_temp > pid->integral_limit) {
+        integral_temp = pid->integral_limit;
+    } else if (integral_temp < -pid->integral_limit) {
+        integral_temp = -pid->integral_limit;
+    }
+    
+    // 抗积分饱和：只有当控制器输出未达到极限值，或者误差信号与输出同方向时才更新积分项
+    float output_p = pid->Kp * pid->error;
+    float output_i = pid->Ki * integral_temp;
+    float output_d = pid->Kd * (pid->error - pid->last_error);
+    
+    float output_total = output_p + output_i + output_d;
+    
+    // 只有在输出未饱和时才更新积分项，防止积分饱和
+    if ((output_total >= -pid->output_limit && output_total <= pid->output_limit) ||
+        (pid->error * output_i > 0)) {
+        pid->integral = integral_temp;
     }
 
     // PID计算
-    pid->output = pid->Kp * pid->error +
-                  pid->Ki * pid->integral +
-                  pid->Kd * (pid->error - pid->last_error);
+    pid->output = output_p + pid->Ki * pid->integral + output_d;
 
     // 输出限幅
     if (pid->output > pid->output_limit) {
@@ -87,6 +101,7 @@ void PID_Reset(PID_Controller_t *pid)
     pid->actual = 0.0f;
     pid->error = 0.0f;
     pid->last_error = 0.0f;
+    pid->prev_error = 0.0f;
     pid->integral = 0.0f;
     pid->output = 0.0f;
 }

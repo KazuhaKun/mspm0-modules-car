@@ -36,8 +36,4 @@ void Encoder_IRQHandler(void);                     // 编码器中断处理函�
 // 定时器中断处理函数（用于速度计算）
 void Encoder_Timer_IRQHandler(void);
 
-// 兼容性函数
-int16_t Encoder_Get_Speed_L(void);                 // 获取左电机速度
-int16_t Encoder_Get_Speed_R(void);                 // 获取右电机速度
-
 #endif

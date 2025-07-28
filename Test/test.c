@@ -65,8 +65,8 @@ void Test_Display_IMU(void)
  */
 void Test_Display_Motor_Encoder(void)
 {
-    int16_t speed_L = Encoder_Get_Speed_L();
-    int16_t speed_R = Encoder_Get_Speed_R();
+    int32_t speed_L = Encoder_GetSpeed_PPS(0);
+    int32_t speed_R = Encoder_GetSpeed_PPS(1);
 
     sprintf(oled_buffer, "L_S:%-4d R_S:%-4d", speed_L, speed_R);
     OLED_ShowString(0, 0, (uint8_t *)oled_buffer, 16);
@@ -98,7 +98,6 @@ void Test_Manual_Mode_Straight_Line(void)
     // 直接设置左右电机速度，使小车直线行驶
     // 在手动模式下，MotorControl_Update()函数会直接返回，不进行任何处理
     // 因此我们需要手动设置电机速度
-    Motor_Set_Pwm(base_speed, base_speed);
     
     // 持续运行直到程序被中断
     while(1) {
@@ -165,16 +164,12 @@ void Test_Check_Line_Sensors(void)
 void Test_All_Modules(void)
 {
     uint32_t tick = 0;
-    MotorControl_SetBaseSpeed(5); // 进一步降低基础速度用于测试，原来是20
+    MotorControl_SetBaseSpeed(5);
     MotorControl_SetMode(MOTOR_MODE_YAW_CORRECTION);
 
     while(1)
     {
         tick++;
-
-        // !!注意!!
-        // MotorControl_Update() 已由TIMA1定时器中断在后台自动调用，
-        // 主循环中不再需要调用它。
 
         // OLED显示刷新，每100ms刷新一次，避免闪烁
         if (tick % 10 == 0) {
@@ -200,9 +195,11 @@ void Test_All_Modules(void)
     }
 }
 
+#define TEST_YAW_STRAIGHT_LINE_WITH_LINE_TRACKER_SPEED 15.0f // 线速度
 /**
  * @brief 基于Yaw角的直线行驶测试，当循迹传感器检测不到线时停车
  */
+
 void Test_Yaw_Straight_Line_With_LineTracker(void)
 {
     OLED_Clear();
@@ -216,17 +213,14 @@ void Test_Yaw_Straight_Line_With_LineTracker(void)
     MotorControl_SetTargetYaw(initial_yaw);
     
     // 设置基础速度
-    MotorControl_SetBaseSpeed(30.0f);
+    MotorControl_SetBaseSpeed(TEST_YAW_STRAIGHT_LINE_WITH_LINE_TRACKER_SPEED);
     
     // 设置为Yaw角闭环模式
     MotorControl_SetMode(MOTOR_MODE_YAW_CORRECTION);
     
-    while(1) {
-        // 读取循迹传感器数据
-        LineTracker_ReadSensors();
-        
+    while(1) {        
         // 检查是否检测到线
-        if (!LineTracker_IsLineDetected()) {
+        if (LineTracker_IsLineDetected()) {
             // 没有检测到线，停车
             MotorControl_SetMode(MOTOR_MODE_STOP);
             
@@ -242,7 +236,7 @@ void Test_Yaw_Straight_Line_With_LineTracker(void)
             if (g_motorControl.mode != MOTOR_MODE_YAW_CORRECTION) {
                 // 如果之前是停止状态，重新设置为Yaw角闭环模式
                 MotorControl_SetTargetYaw(initial_yaw);
-                MotorControl_SetBaseSpeed(30.0f);
+                MotorControl_SetBaseSpeed(TEST_YAW_STRAIGHT_LINE_WITH_LINE_TRACKER_SPEED);
                 MotorControl_SetMode(MOTOR_MODE_YAW_CORRECTION);
             }
             

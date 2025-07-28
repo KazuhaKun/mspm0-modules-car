@@ -42,7 +42,7 @@ int main(void)
 
     // 外设初始化
     MPU6050_Init();
-    delay_ms(8000);
+    // delay_ms(8000);
     OLED_Init();
     // Ultrasonic_Init();
     // BNO08X_Init();

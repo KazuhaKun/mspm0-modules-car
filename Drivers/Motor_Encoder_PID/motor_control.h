@@ -15,12 +15,14 @@
 // 电机控制模式
 typedef enum {
     MOTOR_MODE_STOP,            // 停止
+    MOTOR_MODE_LINE_FOLLOWING,  // 循迹模式
     MOTOR_MODE_YAW_CORRECTION,  // Yaw角闭环
     MOTOR_MODE_MANUAL           // 手动控制
 } Motor_Mode_t;
 
 // 电机控制结构体
 typedef struct {
+    PID_Controller_t line_pid;      // 循迹PID控制器
     PID_Controller_t yaw_pid;       // Yaw角PID
     PID_Controller_t speed_pid_L;   // 左轮速度PID
     PID_Controller_t speed_pid_R;   // 右轮速度PID
