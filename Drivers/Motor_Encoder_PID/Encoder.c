@@ -169,6 +169,6 @@ void Encoder_Timer_IRQHandler(void)
         last_count[i] = encoder_count[i];
     }
     
-    // 清除定时器中断标志
-    DL_TimerA_clearInterruptStatus(TIMER_CALC_INST, DL_TIMER_INTERRUPT_ZERO_EVENT);
+    // 注意：中断清除已移到TIMA1_IRQHandler中进行，确保中断能及时清除
+    // DL_TimerA_clearInterruptStatus(TIMER_CALC_INST, DL_TIMER_INTERRUPT_ZERO_EVENT);
 }

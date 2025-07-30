@@ -2,7 +2,7 @@
 "./ti_msp_dl_config.o"
 "./startup_mspm0g350x_ticlang.o"
 "./Drivers/LineTracker/linetracker.o"
-"./Drivers/LineTracker/linetracker_test.o"
+"./Drivers/LineTracker/turn_detection.o"
 "./Drivers/MPU6050/inv_mpu.o"
 "./Drivers/MPU6050/inv_mpu_dmp_motion_driver.o"
 "./Drivers/MPU6050/mpu6050.o"

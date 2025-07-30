@@ -103,6 +103,11 @@ extern "C" {
 #define TIMER_CALC_INST_IRQHandler                              TIMA1_IRQHandler
 #define TIMER_CALC_INST_INT_IRQN                                (TIMA1_INT_IRQn)
 #define TIMER_CALC_INST_LOAD_VALUE                                       (3124U)
+/* Defines for TIMER_TRACKER */
+#define TIMER_TRACKER_INST                                               (TIMG8)
+#define TIMER_TRACKER_INST_IRQHandler                           TIMG8_IRQHandler
+#define TIMER_TRACKER_INST_INT_IRQN                             (TIMG8_INT_IRQn)
+#define TIMER_TRACKER_INST_LOAD_VALUE                                   (39999U)
 
 
 
@@ -231,6 +236,7 @@ void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_PWM_MOTOR_init(void);
 void SYSCFG_DL_TIMER_CALC_init(void);
+void SYSCFG_DL_TIMER_TRACKER_init(void);
 void SYSCFG_DL_I2C_MPU6050_init(void);
 void SYSCFG_DL_I2C_OLED_init(void);
 

@@ -10,6 +10,10 @@
 #include "../MSPM0/clock.h"
 #include <stdio.h>
 
+// 函数声明
+void LineTracker_DisplayOnOLED(void);
+void LineTracker_PerformLineFollowing(void);
+
 // 循迹控制参数
 #define LINE_FOLLOW_BASE_SPEED      50      // 基础速度
 #define LINE_FOLLOW_MAX_SPEED       80      // 最大速度

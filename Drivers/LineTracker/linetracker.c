@@ -47,9 +47,9 @@ void LineTracker_Init(void)
 }
 
 /**
- * @brief 读取所有传感器的值
+ * @brief 读取所有传感器的值（用于中断中快速读取）
  */
-void LineTracker_ReadSensors(void)
+void LineTracker_ReadSensors_Interrupt(void)
 {
     uint8_t i;
     
@@ -77,6 +77,15 @@ void LineTracker_ReadSensors(void)
             g_lineTracker.activeSensorCount++;
         }
     }
+}
+
+/**
+ * @brief 读取所有传感器的值
+ */
+void LineTracker_ReadSensors(void)
+{
+    // 使用中断版本的读取函数
+    LineTracker_ReadSensors_Interrupt();
     
     // 计算线位置
     g_lineTracker.linePosition = LineTracker_GetLinePosition();

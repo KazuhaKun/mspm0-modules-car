@@ -25,9 +25,9 @@ extern "C" {
 // 传感器权重定义（用于计算偏差）
 #define SENSOR_WEIGHT_0     -30     // 最左边传感器
 #define SENSOR_WEIGHT_1     -20
-#define SENSOR_WEIGHT_2     -10
+#define SENSOR_WEIGHT_2     -12
 #define SENSOR_WEIGHT_3     0       // 中间传感器
-#define SENSOR_WEIGHT_4     10
+#define SENSOR_WEIGHT_4     12
 #define SENSOR_WEIGHT_5     20
 #define SENSOR_WEIGHT_6     30      // 最右边传感器
 
@@ -62,6 +62,11 @@ extern LineTracker_t g_lineTracker;
  * @brief 初始化循迹传感器
  */
 void LineTracker_Init(void);
+
+/**
+ * @brief 读取所有传感器的值（用于中断中快速读取）
+ */
+void LineTracker_ReadSensors_Interrupt(void);
 
 /**
  * @brief 读取所有传感器的值
@@ -105,23 +110,10 @@ uint8_t LineTracker_GetActiveSensorCount(void);
  */
 uint8_t LineTracker_GetSensorValue(uint8_t sensorIndex);
 
-/*
- * @brief 打印传感器状态（用于调试）
- */
-//void LineTracker_PrintStatus(void);
-
 /**
  * @brief 校准传感器（可选功能）
  */
 void LineTracker_Calibrate(void);
-
-// 测试相关函数声明
-void LineTracker_DisplayOnOLED(void);
-void LineTracker_PerformLineFollowing(void);
-
-// 调试相关函数声明（已注释）
-//void LineTracker_IndividualSensorTest(void);
-//void LineTracker_DebugGPIO(void);
 
 #ifdef __cplusplus
 }

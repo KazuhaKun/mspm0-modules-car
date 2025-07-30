@@ -1,22 +1,29 @@
 /*
  * motor_control.c
  *
- *  电机控制实现
+ *  电机控制实现 - 集成多种控制模式
+ *  
+ *  支持的控制模式：
+ *  1. MOTOR_MODE_LINE_FOLLOWING  - 7路循迹传感器PID控制
+ *  2. MOTOR_MODE_YAW_CORRECTION  - MPU6050 Yaw角闭环控制  
+ *  3. MOTOR_MODE_YAW_DELTA       - 角度差量控制（避免180度问题）
+ *  4. MOTOR_MODE_SPEED_CONTROL   - 直接速度控制（用于精确转弯）
+ *  5. MOTOR_MODE_MANUAL          - 手动控制模式
+ *  6. MOTOR_MODE_STOP            - 停止模式
  */
 
 #include "motor_control.h"
 #include "Encoder.h"
 #include "linetracker.h"
+#include <math.h>
 
 // 循迹PID控制器参数设置
-// Kp: 比例增益，决定控制器对位置偏差的响应强度
-// Ki: 积分增益，用于消除稳态误差，但在循迹应用中通常设为0
-// Kd: 微分增益，预测偏差变化趋势，对循迹控制非常重要
-#define LINE_PID_KP         0.8f   // 比例增益，影响循迹响应速度
-#define LINE_PID_KI         0.0f   // 积分增益，循迹应用中通常为0
-#define LINE_PID_KD         1.2f   // 微分增益，有助于预测偏差变化
+// 针对100cm正方形优化：降低响应强度，提高直线稳定性
+#define LINE_PID_KP         0.5f   // 降低比例增益，减少震荡
+#define LINE_PID_KI         0.0f   // 积分增益保持为0
+#define LINE_PID_KD         0.8f   // 适度降低微分增益
 #define LINE_PID_INT_LIMIT  100.0f // 积分限幅，防止积分饱和
-#define LINE_PID_OUT_LIMIT  30.0f  // 输出限幅，限制最大修正值，防止急转
+#define LINE_PID_OUT_LIMIT  20.0f  // 降低输出限幅，减少转向幅度
 
 // Yaw角PID控制器参数设置
 // Kp: 比例增益，决定控制器对当前误差的响应强度
@@ -27,6 +34,14 @@
 #define YAW_PID_KD          0.2f
 #define YAW_PID_INT_LIMIT   200.0f  // 积分限幅，防止积分饱和
 #define YAW_PID_OUT_LIMIT   100.0f  // 输出限幅，限制最大修正值
+
+// 角度差量PID控制器参数设置（新增）
+// 专门用于角度差量控制，避免180度转向问题
+#define YAW_DELTA_PID_KP    2.0f    // 更高的比例增益，快速响应
+#define YAW_DELTA_PID_KI    0.0f    // 不使用积分项，避免累积误差
+#define YAW_DELTA_PID_KD    0.5f    // 适度的微分增益，稳定转向
+#define YAW_DELTA_PID_INT_LIMIT   0.0f   // 积分限幅为0
+#define YAW_DELTA_PID_OUT_LIMIT   30.0f  // 输出限幅，控制转向强度
 
 // 速度环PID控制器参数设置
 // 增大Kp可提高响应速度，但可能导致系统不稳定
@@ -41,7 +56,7 @@
 // 添加速度变化限制，避免速度突变导致电机震动或失步
 #define MAX_SPEED_CHANGE 10.0f
 // 添加最大速度限制，防止电机跑满导致失控
-#define MAX_MOTOR_SPEED 30.0f
+#define MAX_MOTOR_SPEED 50.0f
 
 // 添加电机平衡因子，用于补偿左右电机速度差异
 // 根据实际测试调整该值：>1.0表示右电机需要更多功率，<1.0表示左电机需要更多功率
@@ -70,6 +85,8 @@ void MotorControl_Init(void)
     PID_Init(&g_motorControl.line_pid, LINE_PID_KP, LINE_PID_KI, LINE_PID_KD, LINE_PID_INT_LIMIT, LINE_PID_OUT_LIMIT);
     // Yaw角PID控制器用于保持或调整小车的朝向
     PID_Init(&g_motorControl.yaw_pid, YAW_PID_KP, YAW_PID_KI, YAW_PID_KD, YAW_PID_INT_LIMIT, YAW_PID_OUT_LIMIT);
+    // 角度差量PID控制器用于精确的角度差量控制（新增）
+    PID_Init(&g_motorControl.yaw_delta_pid, YAW_DELTA_PID_KP, YAW_DELTA_PID_KI, YAW_DELTA_PID_KD, YAW_DELTA_PID_INT_LIMIT, YAW_DELTA_PID_OUT_LIMIT);
     // 左轮速度PID控制器用于精确控制左轮转速
     PID_Init(&g_motorControl.speed_pid_L, SPEED_PID_KP, SPEED_PID_KI, SPEED_PID_KD, SPEED_PID_INT_LIMIT, SPEED_PID_OUT_LIMIT);
     // 右轮速度PID控制器用于精确控制右轮转速
@@ -79,6 +96,9 @@ void MotorControl_Init(void)
     g_motorControl.mode = MOTOR_MODE_STOP;
     g_motorControl.base_speed = 20.0f; // 降低默认基础速度，避免过快
     g_motorControl.target_yaw = 0.0f;
+    g_motorControl.yaw_delta_target = 0.0f;  // 新增：初始化角度差量目标值
+    g_motorControl.left_speed_target = 0.0f;   // 新增：初始化左轮目标速度
+    g_motorControl.right_speed_target = 0.0f;  // 新增：初始化右轮目标速度
     
     // 设置循迹PID的目标值为0（保持在线中央）
     PID_SetTarget(&g_motorControl.line_pid, 0.0f);
@@ -111,10 +131,12 @@ void MotorControl_SetMode(Motor_Mode_t mode)
  */
 void MotorControl_SetBaseSpeed(float speed)
 {
-    // // 限制基础速度不能为负值
-    // if (speed < 0.0f) {
-    //     speed = 0.0f;
-    // }
+    // 限制基础速度范围，避免过大
+    if (speed > 50.0f) {
+        speed = 50.0f;
+    } else if (speed < 0.0f) {
+        speed = 0.0f;
+    }
     g_motorControl.base_speed = speed;
 }
 
@@ -128,6 +150,29 @@ void MotorControl_SetTargetYaw(float yaw)
 {
     g_motorControl.target_yaw = yaw;
     PID_SetTarget(&g_motorControl.yaw_pid, yaw);
+}
+
+/**
+ * @brief 设置角度差量目标值（新增）
+ * @param yaw_delta 目标角度差量（正值=逆时针转向，负值=顺时针转向）
+ * 
+ * 角度差量控制可以避免180度转向问题，精确控制转向幅度
+ */
+void MotorControl_SetYawDelta(float yaw_delta)
+{
+    g_motorControl.yaw_delta_target = yaw_delta;
+    PID_SetTarget(&g_motorControl.yaw_delta_pid, yaw_delta);
+}
+
+/**
+ * @brief 设置左右轮目标速度（用于差速转弯等精确控制）
+ * @param left_speed 左轮目标速度
+ * @param right_speed 右轮目标速度
+ */
+void MotorControl_SetSpeedTarget(float left_speed, float right_speed)
+{
+    g_motorControl.left_speed_target = left_speed;
+    g_motorControl.right_speed_target = right_speed;
 }
 
 /**
@@ -154,7 +199,18 @@ void MotorControl_Update(void)
         case MOTOR_MODE_LINE_FOLLOWING:
             // 循迹模式 - 根据传感器检测到的线位置调整行驶方向
             // 获取当前线位置偏差值（-30到30，0表示在线中央）
-            line_correction = PID_Calculate(&g_motorControl.line_pid, g_lineTracker.linePosition);
+            
+            // 特殊处理：当只有最边缘的传感器检测到线时，限制修正值避免振荡
+            if (g_lineTracker.sensorBits == 0b0000001) {
+                // 只有最左边传感器检测到线，使用温和的左转修正
+                line_correction = -15.0f; // 限制左转修正值
+            } else if (g_lineTracker.sensorBits == 0b1000000) {
+                // 只有最右边传感器检测到线，使用温和的右转修正
+                line_correction = 15.0f;  // 限制右转修正值
+            } else {
+                // 正常情况下使用PID计算
+                line_correction = PID_Calculate(&g_motorControl.line_pid, g_lineTracker.linePosition);
+            }
             
             // 根据线位置偏差计算左右轮速度差值
             // 使用比例控制方式，避免速度突变和反向
@@ -187,7 +243,28 @@ void MotorControl_Update(void)
             left_speed_target = (left_speed_target > MAX_MOTOR_SPEED) ? MAX_MOTOR_SPEED : (left_speed_target < -MAX_MOTOR_SPEED) ? -MAX_MOTOR_SPEED : left_speed_target;
             right_speed_target = (right_speed_target > MAX_MOTOR_SPEED) ? MAX_MOTOR_SPEED : (right_speed_target < -MAX_MOTOR_SPEED) ? -MAX_MOTOR_SPEED : right_speed_target;
 
+            break;
 
+        case MOTOR_MODE_YAW_DELTA:
+            // 角度差量控制模式（新增） - 通过角度差量精确控制转向
+            // 使用角度差量PID，输入为0（表示已完成目标角度差量）
+            yaw_correction = PID_Calculate(&g_motorControl.yaw_delta_pid, 0.0f);
+
+            // 根据角度差量误差计算左右轮速度差值
+            // 正的角度差量表示逆时针转向，负的表示顺时针转向
+            left_speed_target = g_motorControl.base_speed - yaw_correction;
+            right_speed_target = (g_motorControl.base_speed + yaw_correction) * MOTOR_BALANCE_FACTOR;
+            
+            // 限制速度目标值，避免过大
+            left_speed_target = (left_speed_target > MAX_MOTOR_SPEED) ? MAX_MOTOR_SPEED : (left_speed_target < -MAX_MOTOR_SPEED) ? -MAX_MOTOR_SPEED : left_speed_target;
+            right_speed_target = (right_speed_target > MAX_MOTOR_SPEED) ? MAX_MOTOR_SPEED : (right_speed_target < -MAX_MOTOR_SPEED) ? -MAX_MOTOR_SPEED : right_speed_target;
+
+            break;
+
+        case MOTOR_MODE_SPEED_CONTROL:
+            // 速度控制模式 - 直接使用设置的左右轮目标速度
+            left_speed_target = g_motorControl.left_speed_target;
+            right_speed_target = g_motorControl.right_speed_target;
             break;
 
         case MOTOR_MODE_MANUAL:
@@ -233,6 +310,7 @@ void MotorControl_Stop(void)
     Motor_Stop(MOTOR_ALL);
     PID_Reset(&g_motorControl.line_pid);
     PID_Reset(&g_motorControl.yaw_pid);
+    PID_Reset(&g_motorControl.yaw_delta_pid);  // 新增：重置角度差量PID
     PID_Reset(&g_motorControl.speed_pid_L);
     PID_Reset(&g_motorControl.speed_pid_R);
 }

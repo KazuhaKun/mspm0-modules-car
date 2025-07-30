@@ -99,6 +99,7 @@ main.o: ../main.c \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/pid.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/linetracker.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Motor.h \
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/turn_detection.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Test/test.h
 ti_msp_dl_config.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/msp/msp.h:
@@ -198,4 +199,5 @@ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/m
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/pid.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/linetracker.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Motor.h:
+C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/turn_detection.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Test/test.h:

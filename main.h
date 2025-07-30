@@ -16,6 +16,7 @@
 #include "lsm6dsv16x.h"
 #include "motor_control.h"
 #include "linetracker.h"
+#include "turn_detection.h"
 
 
 #endif  /* #ifndef _MAIN_H_ */

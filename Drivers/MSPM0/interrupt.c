@@ -7,11 +7,21 @@
 #include "vl53l0x.h"
 #include "lsm6dsv16x.h"
 #include "motor_control.h"
+#include "turn_detection.h"
 
 
 void SysTick_Handler(void)
 {
     tick_ms++;
+}
+
+void TIMG8_IRQHandler(void)
+{
+    // 清除定时器中断标志
+    DL_TimerG_clearInterruptStatus(TIMER_TRACKER_INST, DL_TIMER_IIDX_ZERO);
+    
+    // 更新转弯检测状态
+    TurnDetection_Update();
 }
 
 #if defined UART_BNO08X_INST_IRQHandler
@@ -164,6 +174,9 @@ void GROUP1_IRQHandler(void)
 // 定时器中断处理函数（用于速度计算和PID控制）
 void TIMA1_IRQHandler(void)
 {
+    // 立即清除定时器中断标志，确保中断能够被及时清除
+    DL_TimerA_clearInterruptStatus(TIMER_CALC_INST, DL_TIMER_IIDX_ZERO);
+    
     // 先处理编码器速度计算
     Encoder_Timer_IRQHandler();
     

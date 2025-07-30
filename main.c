@@ -1,8 +1,11 @@
 /*
  * Copyright (c) 2021, Texas Instruments Incorporated
- * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
+ * Redistribution a        // 测试转弯角度计算逻辑（调试转弯180度问题）
+        // Test_Turn_Angle_Calculation();
+        
+        // 正方形循迹主功能（优化版 - 改进转弯检测）
+        Test_Square_Movement_Hybrid();  // 混合模式：7路循迹直线 + MPU6050精确转弯e in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
@@ -33,6 +36,7 @@
 #include "ti_msp_dl_config.h"
 #include "main.h"
 #include "test.h"
+// #include "Test1.h"  // 已归档为Test1.h.bak
 
 int main(void)
 {
@@ -51,6 +55,7 @@ int main(void)
     // LSM6DSV16X_Init();
     LineTracker_Init();
     MotorControl_Init(); // 此函数会初始化电机、编码器和所有PID控制器
+    TurnDetection_Init(); // 初始化转弯检测模块
 
     // 3. 在OLED上显示启动信息
     OLED_Clear();
@@ -60,17 +65,30 @@ int main(void)
     delay_ms(2000); // 等待2秒
 
     // 4. 调用传感器检测测试函数
-    // 这个函数包含一个无限循环，会接管程序的所有测试和显示任务
+    // 此函数用于调试目的，显示传感器的原始值
     // Test_Check_Line_Sensors();
 
 
     // 主循环
     while (1) 
     {
-        // Test_DualMotorLoop();    //双电机测试
-        // Test_All_Modules();      //综合测试
-        // Test_Manual_Mode_Straight_Line(); //手动模式直线行驶测试
-        Test_LineTracker(); //基于7路循迹传感器的行驶测试，当循迹传感器检测不到线时停车
-        // Test_Yaw_Straight_Line_With_LineTracker(); //基于Yaw角直线行驶，循迹传感器检测不到线时停车
+        // 选择要运行的测试函数：
+        // 1. 取消注释对应的函数来运行特定测试
+        // 2. 同时注释掉其他测试函数
+        
+        // 传感器状态检查（调试用）
+        // Test_Check_Line_Sensors();  
+        
+        // 显示MPU6050 yaw角原始信息（调试陀螺仪）
+        // Test_Display_Yaw_Info();
+        
+        // 测试MPU6050角度跨越特性（专门调试±180度边界）
+        // Test_Angle_Crossing_Debug();
+        
+        // 测试转弯角度计算逻辑（调试转弯180度问题）
+        // Test_Turn_Angle_Calculation();
+        
+        // 正方形循迹主功能（默认运行）
+        Test_Square_Movement_Hybrid();  // 混合模式：7路循迹直线 + MPU6050精确转弯
     }
 }
