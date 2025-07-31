@@ -154,23 +154,23 @@ void MotorControl_Update(void)
         case MOTOR_MODE_LINE_FOLLOWING:
             // 循迹模式 - 根据传感器检测到的线位置调整行驶方向
             
-            // 特殊处理：当只有最边缘的传感器检测到线时，使用更强的修正值避免振荡
-            if (g_lineTracker.sensorBits == 0b0000001) {
-                // 只有最左边传感器检测到线，使用较强的左转修正
-                line_correction = -10.0f;
-            } else if (g_lineTracker.sensorBits == 0b0000011) {
-                // 左边两个传感器检测到线，使用中等左转修正
-                line_correction = -8.0f;
-            } else if (g_lineTracker.sensorBits == 0b1000000) {
-                // 只有最右边传感器检测到线，使用较强的右转修正
-                line_correction = 10.0f;
-            } else if (g_lineTracker.sensorBits == 0b1100000) {
-                // 右边两个传感器检测到线，使用中等右转修正
-                line_correction = 8.0f;
-            } else {
-                // 正常情况下使用PID计算
+            // // 特殊处理：当只有最边缘的传感器检测到线时，使用更强的修正值避免振荡
+            // if (g_lineTracker.sensorBits == 0b0000001) {
+            //     // 只有最左边传感器检测到线，使用较强的左转修正
+            //     line_correction = -10.0f;
+            // } else if (g_lineTracker.sensorBits == 0b0000011) {
+            //     // 左边两个传感器检测到线，使用中等左转修正
+            //     line_correction = -8.0f;
+            // } else if (g_lineTracker.sensorBits == 0b1000000) {
+            //     // 只有最右边传感器检测到线，使用较强的右转修正
+            //     line_correction = 10.0f;
+            // } else if (g_lineTracker.sensorBits == 0b1100000) {
+            //     // 右边两个传感器检测到线，使用中等右转修正
+            //     line_correction = 8.0f;
+            // } else {
+            //     // 正常情况下使用PID计算
                 line_correction = PID_Calculate(&g_motorControl.line_pid, g_lineTracker.linePosition);
-            }
+            // }
             
             // 根据线位置偏差计算左右轮速度差值
             float correction_ratio = line_correction / LINE_PID_OUT_LIMIT;

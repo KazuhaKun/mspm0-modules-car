@@ -20,8 +20,8 @@ char oled_buffer[40];
 
 
 #define SQUARE_LINE_SPEED 30.0f       // 正方形直线行驶速度
-#define SQUARE_TURN_SPEED 5.0f       // 原地转弯速度
-#define SQUARE_TURN_SETTLE_MS 200     // 转弯完成后稳定时间
+#define SQUARE_TURN_SPEED 3.0f       // 原地转弯速度
+#define SQUARE_TURN_SETTLE_MS 50      // 转弯完成后稳定时间（从200ms减少到50ms）
 #define SQUARE_TURN_PRECISION 3.0f    // 转弯精度（度）
 #define SQUARE_TURN_TIMEOUT_MS 1000   // 转弯 超时时间（毫秒）
 
@@ -50,7 +50,7 @@ static int PerformSensorBasedTurn(int direction) {
         LineTracker_ReadSensors();
         
         // 检查中间传感器是否检测到线（表示转向完成）
-        if (g_lineTracker.sensorValue[2]) {  // 传感器3是中间传感器
+        if (g_lineTracker.sensorValue[2] && g_lineTracker.sensorValue[3]) {  // 传感器2和3同时检测到线才表示转向完成
             MotorControl_SetMode(MOTOR_MODE_STOP);
             return 0; // 成功
         }
@@ -110,7 +110,7 @@ void Test_Square_Movement_Hybrid(void)
                 if (TurnDetection_IsTurnReady()) {
                     // 立即停车并执行转向
                     MotorControl_SetMode(MOTOR_MODE_STOP);
-                    delay_ms(100); // 短暂暂停确保停车
+                    delay_ms(50); // 短暂暂停确保停车，从100ms减少到20ms以提高响应速度
                     
                     // 执行基于传感器反馈的左转
                     int turn_result = PerformSensorBasedTurn(1); // 1表示左转
