@@ -37,10 +37,10 @@ static int PerformSensorBasedTurn(int direction) {
     MotorControl_SetMode(MOTOR_MODE_SPEED_CONTROL);
     
     if (direction > 0) {
-        // 左转：左轮反向旋转，右轮正向旋转（增加转向力度）
+        // 左转：左轮反向旋转，右轮正向旋转
         MotorControl_SetSpeedTarget(-SQUARE_TURN_SPEED * 0.5f, SQUARE_TURN_SPEED);
     } else {
-        // 右转：左轮正向旋转，右轮反向旋转（增加转向力度）
+        // 右转：左轮正向旋转，右轮反向旋转
         MotorControl_SetSpeedTarget(SQUARE_TURN_SPEED, -SQUARE_TURN_SPEED * 0.5f);
     }
     
@@ -50,9 +50,8 @@ static int PerformSensorBasedTurn(int direction) {
         LineTracker_ReadSensors();
         
         // 检查中间传感器是否检测到线（表示转向完成）
-        if (g_lineTracker.sensorValue[3]) {  // 传感器3是中间传感器
+        if (g_lineTracker.sensorValue[2]) {  // 传感器2是中间偏左传感器
             MotorControl_SetMode(MOTOR_MODE_STOP);
-            delay_ms(20); // 转向完成后短暂延时确保停车
             return 0; // 成功
         }
         
@@ -60,12 +59,11 @@ static int PerformSensorBasedTurn(int direction) {
         uint32_t turn_duration = tick_ms - turn_start_time;
         if (turn_duration > SQUARE_TURN_TIMEOUT_MS) {
             MotorControl_SetMode(MOTOR_MODE_STOP);
-            delay_ms(20); // 超时后短暂延时确保停车
             return -1; // 超时
         }
         
         // 电机控制更新在中断中处理，这里只需要短暂延时以控制循环频率
-        delay_ms(5); // 保持5ms延时以提高响应速度
+        delay_ms(5); // 从10ms减少到5ms以提高响应速度
     }
 }
 
@@ -110,9 +108,9 @@ void Test_Square_Movement_Hybrid(void)
                 
                 // 检查是否检测到转弯
                 if (TurnDetection_IsTurnReady()) {
-                    // 立即停车并执行转向（减少停车延时，避免走过）
+                    // 立即停车并执行转向
                     MotorControl_SetMode(MOTOR_MODE_STOP);
-                    delay_ms(20); // 减少停车延时从100ms到20ms，避免走过
+                    delay_ms(100); // 短暂暂停确保停车
                     
                     // 执行基于传感器反馈的左转
                     int turn_result = PerformSensorBasedTurn(1); // 1表示左转
@@ -127,7 +125,7 @@ void Test_Square_Movement_Hybrid(void)
                         case -1: OLED_ShowString(0, 2, (uint8_t*)"TIMEOUT", 16); break;
                         default: OLED_ShowString(0, 2, (uint8_t*)"UNKNOWN", 16); break;
                     }
-                    delay_ms(300); // 减少显示延时从500ms到300ms
+                    delay_ms(500);
                     
                     settle_start_time = tick_ms;
                     current_state = SQUARE_STATE_SETTLING;
@@ -146,15 +144,11 @@ void Test_Square_Movement_Hybrid(void)
                         g_lineTracker.sensorValue[2] ? 1 : 0);
                     OLED_ShowString(0, 6, (uint8_t*)oled_buffer, 16);
                     
-                    // 显示抑制状态和转弯检测状态
+                    // 显示抑制状态
                     if (g_turnDetection.state == TURN_STATE_INHIBITED) {
                         uint32_t inhibit_remaining = TURN_INHIBIT_TIME_MS - (tick_ms - g_turnDetection.inhibit_start_time);
                         sprintf(oled_buffer, "Inhib:%dms", (int)inhibit_remaining);
                         OLED_ShowString(64, 0, (uint8_t*)oled_buffer, 16);
-                    } else if (g_turnDetection.state == TURN_STATE_CONFIRMED) {
-                        OLED_ShowString(64, 0, (uint8_t*)"Confirmed", 16);
-                    } else if (g_turnDetection.state == TURN_STATE_DETECTED) {
-                        OLED_ShowString(64, 0, (uint8_t*)"Detected", 16);
                     } else {
                         OLED_ShowString(64, 0, (uint8_t*)"Ready", 16);
                     }
