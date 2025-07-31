@@ -8,6 +8,11 @@
 #include "lsm6dsv16x.h"
 #include "motor_control.h"
 #include "turn_detection.h"
+#include "Encoder.h"
+
+// 函数声明
+void Encoder_IRQHandler(void);
+void Encoder_Timer_IRQHandler(void);
 
 
 void SysTick_Handler(void)

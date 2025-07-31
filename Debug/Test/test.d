@@ -1,7 +1,6 @@
 # FIXED
 
 Test/test.o: ../Test/test.c ../Test/test.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/turn_detection.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h \
  ti_msp_dl_config.h \
  C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/msp/msp.h \
@@ -83,9 +82,9 @@ Test/test.o: ../Test/test.c ../Test/test.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/linetracker.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Motor.h \
  C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Encoder.h \
- C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MSPM0/clock.h
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MSPM0/clock.h \
+ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/turn_detection.h
 ../Test/test.h:
-C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/turn_detection.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h:
 ti_msp_dl_config.h:
 C:/ti/mspm0_sdk_2_05_00_05/source/ti/devices/msp/msp.h:
@@ -168,3 +167,4 @@ C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/linetra
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Motor.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/Motor_Encoder_PID/Encoder.h:
 C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/MSPM0/clock.h:
+C:/Users/AkiRin/workspace_ccstheia/mspm0-modules-car/Drivers/LineTracker/turn_detection.h:

@@ -60,28 +60,30 @@ void TurnDetection_Update(void)
             break;
             
         case TURN_STATE_DETECTED:
-            if (!turn_condition) {
-                // 转弯信号消失，回到空闲状态
+            // 即使转弯条件消失，也要检查是否应该确认转弯
+            uint32_t detect_duration = tick_ms - g_turnDetection.detect_start_time;
+            bool quick_confirm = (left_sensor_count >= 2);
+            bool stable_confirm = (detect_duration >= TURN_DETECT_STABLE_MS);
+            
+            // 如果转弯信号稳定，确认转弯
+            if (quick_confirm || stable_confirm) {
+                g_turnDetection.state = TURN_STATE_CONFIRMED;
+                g_turnDetection.turn_ready = true;
+            } else if (detect_duration >= TURN_DETECT_TIMEOUT_MS) {
+                // 检测超时，回到空闲状态
                 g_turnDetection.state = TURN_STATE_IDLE;
-            } else {
-                // 检查转弯信号是否稳定
-                uint32_t detect_duration = tick_ms - g_turnDetection.detect_start_time;
-                bool quick_confirm = (left_sensor_count >= 2);
-                bool stable_confirm = (detect_duration >= TURN_DETECT_STABLE_MS);
-                
-                // 如果转弯信号稳定，确认转弯
-                if (quick_confirm || stable_confirm) {
-                    g_turnDetection.state = TURN_STATE_CONFIRMED;
-                    g_turnDetection.turn_ready = true;
-                } else if (detect_duration >= TURN_DETECT_TIMEOUT_MS) {
-                    // 检测超时，回到空闲状态
-                    g_turnDetection.state = TURN_STATE_IDLE;
-                }
+                g_turnDetection.turn_ready = false;
             }
             break;
             
         case TURN_STATE_CONFIRMED:
             // 等待转弯被处理
+            // 如果转弯长时间未被处理，强制回到空闲状态以避免卡死
+            if ((tick_ms - g_turnDetection.detect_start_time) >= (TURN_DETECT_TIMEOUT_MS * 2)) {
+                g_turnDetection.state = TURN_STATE_IDLE;
+                g_turnDetection.turn_ready = false;
+                g_turnDetection.detect_start_time = 0; // 重置检测开始时间
+            }
             break;
             
         case TURN_STATE_INHIBITED:

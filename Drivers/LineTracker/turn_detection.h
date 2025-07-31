@@ -6,9 +6,9 @@
 
 // 转弯检测参数
 #define TURN_DETECT_COUNT_MIN 2       // 最少检测到的左侧传感器数量
-#define TURN_DETECT_STABLE_MS 2       // 转弯信号稳定时间（毫秒）
-#define TURN_DETECT_TIMEOUT_MS 100    // 转弯检测最大等待时间
-#define TURN_INHIBIT_TIME_MS 800      // 转弯后的抑制时间（防止重复检测）
+#define TURN_DETECT_STABLE_MS 1       // 转弯信号稳定时间（毫秒）
+#define TURN_DETECT_TIMEOUT_MS 50     // 转弯检测最大等待时间
+#define TURN_INHIBIT_TIME_MS 400      // 转弯后的抑制时间（防止重复检测）（从500ms降到400ms）
 
 // 转弯检测状态
 typedef enum {
