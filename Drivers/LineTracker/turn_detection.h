@@ -5,10 +5,10 @@
 #include <stdbool.h>
 
 // 转弯检测参数
-#define TURN_DETECT_COUNT_MIN 3       // 最少检测到的左侧传感器数量（从3降到2，提高灵敏度）
-#define TURN_DETECT_STABLE_MS 1       // 转弯信号稳定时间（毫秒）（从2ms降到1ms，提高响应速度）
-#define TURN_DETECT_TIMEOUT_MS 50     // 转弯检测最大等待时间（从100ms降到50ms）
-#define TURN_INHIBIT_TIME_MS 500      // 转弯后的抑制时间（防止重复检测）（从800ms降到500ms）
+#define TURN_DETECT_COUNT_MIN 3       // 最少检测到的左侧传感器数量
+#define TURN_DETECT_STABLE_MS 2       // 转弯信号稳定时间（毫秒）
+#define TURN_DETECT_TIMEOUT_MS 100    // 转弯检测最大等待时间
+#define TURN_INHIBIT_TIME_MS 800      // 转弯后的抑制时间（防止重复检测）
 
 // 转弯检测状态
 typedef enum {

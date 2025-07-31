@@ -50,7 +50,7 @@ static int PerformSensorBasedTurn(int direction) {
         LineTracker_ReadSensors();
         
         // 检查中间传感器是否检测到线（表示转向完成）
-        if (g_lineTracker.sensorValue[2]) {  // 传感器2是中间偏左传感器
+        if (g_lineTracker.sensorValue[2]) {  // 传感器3是中间传感器
             MotorControl_SetMode(MOTOR_MODE_STOP);
             return 0; // 成功
         }
@@ -63,7 +63,7 @@ static int PerformSensorBasedTurn(int direction) {
         }
         
         // 电机控制更新在中断中处理，这里只需要短暂延时以控制循环频率
-        delay_ms(5); // 从10ms减少到5ms以提高响应速度
+        delay_ms(10);
     }
 }
 
@@ -216,6 +216,6 @@ void Test_Square_Movement_Hybrid(void)
             }
         }
         
-        delay_ms(5); // 控制循环频率，从20ms减少到5ms以提高响应速度
+        delay_ms(20); // 控制循环频率，提高响应速度
     }
 }
