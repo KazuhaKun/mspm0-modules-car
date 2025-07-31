@@ -20,7 +20,7 @@ extern "C" {
 #define LINE_SENSOR_COUNT   7
 
 // 传感器逻辑反转选项（如果传感器逻辑相反，将此值设为1）
-#define SENSOR_LOGIC_INVERTED   0
+#define SENSOR_LOGIC_INVERTED   1
 
 // 传感器权重定义（用于计算偏差）
 #define SENSOR_WEIGHT_0     -30     // 最左边传感器
