@@ -15,10 +15,6 @@ ORDERED_OBJS += \
 "./startup_mspm0g350x_ticlang.o" \
 "./Drivers/LineTracker/linetracker.o" \
 "./Drivers/LineTracker/turn_detection.o" \
-"./Drivers/MPU6050/inv_mpu.o" \
-"./Drivers/MPU6050/inv_mpu_dmp_motion_driver.o" \
-"./Drivers/MPU6050/mpu6050.o" \
-"./Drivers/MPU6050/mspm0_i2c.o" \
 "./Drivers/MSPM0/clock.o" \
 "./Drivers/MSPM0/interrupt.o" \
 "./Drivers/Motor_Encoder_PID/Encoder.o" \
@@ -41,14 +37,12 @@ RMDIR := RMDIR /S/Q
 -include sources.mk
 -include subdir_vars.mk
 -include Drivers/LineTracker/subdir_vars.mk
--include Drivers/MPU6050/subdir_vars.mk
 -include Drivers/MSPM0/subdir_vars.mk
 -include Drivers/Motor_Encoder_PID/subdir_vars.mk
 -include Drivers/OLED_Hardware_I2C/subdir_vars.mk
 -include Test/subdir_vars.mk
 -include subdir_rules.mk
 -include Drivers/LineTracker/subdir_rules.mk
--include Drivers/MPU6050/subdir_rules.mk
 -include Drivers/MSPM0/subdir_rules.mk
 -include Drivers/Motor_Encoder_PID/subdir_rules.mk
 -include Drivers/OLED_Hardware_I2C/subdir_rules.mk
@@ -183,8 +177,8 @@ mspm0-modules-car.txt: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(GEN_MISC_FILES__QUOTED)$(BIN_OUTPUTS__QUOTED)$(GEN_FILES__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.o" "ti_msp_dl_config.o" "startup_mspm0g350x_ticlang.o" "Drivers\LineTracker\linetracker.o" "Drivers\LineTracker\turn_detection.o" "Drivers\MPU6050\inv_mpu.o" "Drivers\MPU6050\inv_mpu_dmp_motion_driver.o" "Drivers\MPU6050\mpu6050.o" "Drivers\MPU6050\mspm0_i2c.o" "Drivers\MSPM0\clock.o" "Drivers\MSPM0\interrupt.o" "Drivers\Motor_Encoder_PID\Encoder.o" "Drivers\Motor_Encoder_PID\Motor.o" "Drivers\Motor_Encoder_PID\motor_control.o" "Drivers\Motor_Encoder_PID\pid.o" "Drivers\OLED_Hardware_I2C\oled_hardware_i2c.o" "Test\test.o" 
-	-$(RM) "main.d" "ti_msp_dl_config.d" "startup_mspm0g350x_ticlang.d" "Drivers\LineTracker\linetracker.d" "Drivers\LineTracker\turn_detection.d" "Drivers\MPU6050\inv_mpu.d" "Drivers\MPU6050\inv_mpu_dmp_motion_driver.d" "Drivers\MPU6050\mpu6050.d" "Drivers\MPU6050\mspm0_i2c.d" "Drivers\MSPM0\clock.d" "Drivers\MSPM0\interrupt.d" "Drivers\Motor_Encoder_PID\Encoder.d" "Drivers\Motor_Encoder_PID\Motor.d" "Drivers\Motor_Encoder_PID\motor_control.d" "Drivers\Motor_Encoder_PID\pid.d" "Drivers\OLED_Hardware_I2C\oled_hardware_i2c.d" "Test\test.d" 
+	-$(RM) "main.o" "ti_msp_dl_config.o" "startup_mspm0g350x_ticlang.o" "Drivers\LineTracker\linetracker.o" "Drivers\LineTracker\turn_detection.o" "Drivers\MSPM0\clock.o" "Drivers\MSPM0\interrupt.o" "Drivers\Motor_Encoder_PID\Encoder.o" "Drivers\Motor_Encoder_PID\Motor.o" "Drivers\Motor_Encoder_PID\motor_control.o" "Drivers\Motor_Encoder_PID\pid.o" "Drivers\OLED_Hardware_I2C\oled_hardware_i2c.o" "Test\test.o" 
+	-$(RM) "main.d" "ti_msp_dl_config.d" "startup_mspm0g350x_ticlang.d" "Drivers\LineTracker\linetracker.d" "Drivers\LineTracker\turn_detection.d" "Drivers\MSPM0\clock.d" "Drivers\MSPM0\interrupt.d" "Drivers\Motor_Encoder_PID\Encoder.d" "Drivers\Motor_Encoder_PID\Motor.d" "Drivers\Motor_Encoder_PID\motor_control.d" "Drivers\Motor_Encoder_PID\pid.d" "Drivers\OLED_Hardware_I2C\oled_hardware_i2c.d" "Test\test.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

@@ -19,8 +19,8 @@
 char oled_buffer[40];
 
 
-#define SQUARE_LINE_SPEED 100.0f       // 正方形直线行驶速度
-#define SQUARE_TURN_SPEED 2.0f       // 原地转弯速度
+#define SQUARE_LINE_SPEED 45.0f       // 正方形直线行驶速度
+#define SQUARE_TURN_SPEED 4.0f       // 原地转弯速度
 #define SQUARE_TURN_SETTLE_MS 50      // 转弯完成后稳定时间（从200ms减少到50ms）
 #define SQUARE_TURN_PRECISION 3.0f    // 转弯精度（度）
 #define SQUARE_TURN_TIMEOUT_MS 1000   // 转弯 超时时间（毫秒）
@@ -50,7 +50,7 @@ static int PerformSensorBasedTurn(int direction) {
         LineTracker_ReadSensors();
         
         // 检查中间传感器是否检测到线（表示转向完成）
-        if (g_lineTracker.sensorValue[0] && g_lineTracker.sensorValue[1]) {  // 传感器2和3同时检测到线才表示转向完成
+        if (g_lineTracker.sensorValue[2] && g_lineTracker.sensorValue[3]) {  // 传感器2和3同时检测到线才表示转向完成
             MotorControl_SetMode(MOTOR_MODE_STOP);
             return 0; // 成功
         }
@@ -261,4 +261,61 @@ void Test_Square_Movement_Hybrid_Key_Control(void) {
     
     // 开始执行指定圈数的正方形运动
     Test_Square_Movement_Hybrid_With_Laps(laps);
+}
+
+/**
+ * @brief 循迹传感器调试显示函数
+ * 实时显示7路循迹传感器的状态
+ */
+void Test_Line_Sensors_Debug(void) {
+    OLED_Clear();
+    OLED_ShowString(0, 0, (uint8_t*)"Line Sensor", 16);
+    OLED_ShowString(0, 2, (uint8_t*)"Debug Test", 16);
+    delay_ms(1000);
+    OLED_Clear();
+    
+    while (1) {
+        // 读取传感器数据
+        LineTracker_ReadSensors();
+        
+        // 显示传感器状态
+        OLED_ShowString(0, 0, (uint8_t*)"Sensors:", 16);
+        sprintf(oled_buffer, "S1:%d S2:%d S3:%d", 
+                g_lineTracker.sensorValue[0],
+                g_lineTracker.sensorValue[1], 
+                g_lineTracker.sensorValue[2]);
+        OLED_ShowString(0, 2, (uint8_t*)oled_buffer, 16);
+        
+        sprintf(oled_buffer, "S4:%d S5:%d S6:%d", 
+                g_lineTracker.sensorValue[3],
+                g_lineTracker.sensorValue[4], 
+                g_lineTracker.sensorValue[5]);
+        OLED_ShowString(0, 4, (uint8_t*)oled_buffer, 16);
+        
+        sprintf(oled_buffer, "S7:%d", g_lineTracker.sensorValue[6]);
+        OLED_ShowString(0, 6, (uint8_t*)oled_buffer, 16);
+        
+        // 检查是否有按键按下退出
+        if (!DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_23) ||  // Key_1
+            !DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_21) ||  // Key_2
+            !DL_GPIO_readPins(GPIOB, DL_GPIO_PIN_18) ||  // Key_3
+            !DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_17)) {  // Key_4
+            
+            // 等待按键释放
+            while (!DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_23) ||  // Key_1
+                   !DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_21) ||  // Key_2
+                   !DL_GPIO_readPins(GPIOB, DL_GPIO_PIN_18) ||  // Key_3
+                   !DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_17));   // Key_4
+            
+            break;
+        }
+        
+        delay_ms(50); // 控制刷新频率
+    }
+    
+    // 退出提示
+    OLED_Clear();
+    OLED_ShowString(0, 2, (uint8_t*)"Exit Sensor", 16);
+    OLED_ShowString(0, 4, (uint8_t*)"Debug Test", 16);
+    delay_ms(1000);
 }

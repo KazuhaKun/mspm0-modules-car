@@ -3,7 +3,7 @@
 
 #include "clock.h"
 
-#include "mpu6050.h"
+// #include "mpu6050.h"
 #include "oled_software_i2c.h"
 #include "oled_hardware_i2c.h"
 #include "oled_software_spi.h"
@@ -17,6 +17,8 @@
 #include "motor_control.h"
 #include "linetracker.h"
 #include "turn_detection.h"
+
+extern float yaw = 0.0f;
 
 
 #endif  /* #ifndef _MAIN_H_ */

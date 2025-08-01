@@ -45,7 +45,7 @@ int main(void)
     SysTick_Init();
 
     // 外设初始化
-    MPU6050_Init();
+    // MPU6050_Init();
     // delay_ms(8000);
     OLED_Init();
     // Ultrasonic_Init();
@@ -90,5 +90,8 @@ int main(void)
         
         // 通过按键控制圈数的正方形循迹主功能
         Test_Square_Movement_Hybrid_Key_Control();  // 按键控制混合模式：7路循迹直线 + MPU6050精确转弯
+        
+        // 循迹传感器调试显示
+        // Test_Line_Sensors_Debug();  // 实时显示7路循迹传感器状态
     }
 }

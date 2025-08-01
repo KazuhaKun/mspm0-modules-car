@@ -17,9 +17,9 @@
 #include <math.h>
 
 // 循迹PID控制器参数设置
-#define LINE_PID_KP         1.0f   // 比例增益
+#define LINE_PID_KP         1.2f   // 比例增益
 #define LINE_PID_KI         0.0f   // 积分增益
-#define LINE_PID_KD         0.8f   // 微分增益
+#define LINE_PID_KD         0.6f   // 微分增益
 #define LINE_PID_INT_LIMIT  100.0f // 积分限幅
 #define LINE_PID_OUT_LIMIT  20.0f  // 输出限幅
 
@@ -38,7 +38,7 @@
 #define SPEED_PID_OUT_LIMIT 100.0f
 
 // 添加最大速度限制，防止电机跑满导致失控
-#define MAX_MOTOR_SPEED 50.0f
+#define MAX_MOTOR_SPEED 45.0f
 
 // 添加电机平衡因子，用于补偿左右电机速度差异
 #define MOTOR_BALANCE_FACTOR 1.0f

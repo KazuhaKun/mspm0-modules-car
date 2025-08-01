@@ -126,7 +126,6 @@ GEN_OPTS__QUOTED :=
 SUBDIRS := \
 . \
 Drivers/LineTracker \
-Drivers/MPU6050 \
 Drivers/MSPM0 \
 Drivers/Motor_Encoder_PID \
 Drivers/OLED_Hardware_I2C \

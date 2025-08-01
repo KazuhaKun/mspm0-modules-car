@@ -142,17 +142,6 @@ extern "C" {
 
 
 
-/* Port definition for Pin Group GPIO_MPU6050 */
-#define GPIO_MPU6050_PORT                                                (GPIOB)
-
-/* Defines for PIN_INT: GPIOB.1 with pinCMx 13 on package pin 48 */
-// groups represented: ["GPIO_ENCODER","GPIO_MPU6050"]
-// pins affected: ["PIN_A1","PIN_A2","PIN_B1","PIN_B2","PIN_INT"]
-#define GPIO_MULTIPLE_GPIOB_INT_IRQN                            (GPIOB_INT_IRQn)
-#define GPIO_MULTIPLE_GPIOB_INT_IIDX            (DL_INTERRUPT_GROUP1_IIDX_GPIOB)
-#define GPIO_MPU6050_PIN_INT_IIDX                            (DL_GPIO_IIDX_DIO1)
-#define GPIO_MPU6050_PIN_INT_PIN                                 (DL_GPIO_PIN_1)
-#define GPIO_MPU6050_PIN_INT_IOMUX                               (IOMUX_PINCM13)
 /* Port definition for Pin Group GPIO_MOTOR */
 #define GPIO_MOTOR_PORT                                                  (GPIOB)
 
@@ -172,6 +161,9 @@ extern "C" {
 #define GPIO_ENCODER_PORT                                                (GPIOB)
 
 /* Defines for PIN_A1: GPIOB.11 with pinCMx 28 on package pin 63 */
+// pins affected by this interrupt request:["PIN_A1","PIN_A2","PIN_B1","PIN_B2"]
+#define GPIO_ENCODER_INT_IRQN                                   (GPIOB_INT_IRQn)
+#define GPIO_ENCODER_INT_IIDX                   (DL_INTERRUPT_GROUP1_IIDX_GPIOB)
 #define GPIO_ENCODER_PIN_A1_IIDX                            (DL_GPIO_IIDX_DIO11)
 #define GPIO_ENCODER_PIN_A1_PIN                                 (DL_GPIO_PIN_11)
 #define GPIO_ENCODER_PIN_A1_IOMUX                                (IOMUX_PINCM28)

@@ -29,7 +29,7 @@ void Encoder_Init(void)
     GPIO_ENCODER_PIN_B1_PIN | GPIO_ENCODER_PIN_B2_PIN);
 
     // 使能NVIC中断
-    NVIC_EnableIRQ(GPIO_MULTIPLE_GPIOB_INT_IRQN);
+    NVIC_EnableIRQ(GPIOB_INT_IRQn);
     
     // 启动定时器用于速度计算
     NVIC_EnableIRQ(TIMER_CALC_INST_INT_IRQN);

@@ -11,5 +11,6 @@
 void Test_Square_Movement_Hybrid(void);          // 混合模式正方形循迹
 void Test_Square_Movement_Hybrid_With_Laps(int laps); // 指定圈数的混合模式正方形循迹
 void Test_Square_Movement_Hybrid_Key_Control(void); // 通过按键控制圈数的混合模式正方形循迹
+void Test_Line_Sensors_Debug(void);              // 循迹传感器调试显示
 
 #endif /* TEST_TEST_H_ */

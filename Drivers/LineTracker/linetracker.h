@@ -25,9 +25,9 @@ extern "C" {
 // 传感器权重定义（用于计算偏差）
 #define SENSOR_WEIGHT_0     -30     // 最左边传感器
 #define SENSOR_WEIGHT_1     -20
-#define SENSOR_WEIGHT_2     -5
+#define SENSOR_WEIGHT_2     -10
 #define SENSOR_WEIGHT_3     0       // 中间传感器
-#define SENSOR_WEIGHT_4     5
+#define SENSOR_WEIGHT_4     10
 #define SENSOR_WEIGHT_5     20
 #define SENSOR_WEIGHT_6     30      // 最右边传感器
 
