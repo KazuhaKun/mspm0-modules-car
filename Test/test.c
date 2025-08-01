@@ -50,7 +50,7 @@ static int PerformSensorBasedTurn(int direction) {
         LineTracker_ReadSensors();
         
         // 检查中间传感器是否检测到线（表示转向完成）
-        if (g_lineTracker.sensorValue[2] && g_lineTracker.sensorValue[3]) {  // 传感器2和3同时检测到线才表示转向完成
+        if (g_lineTracker.sensorValue[0] && g_lineTracker.sensorValue[1]) {  // 传感器2和3同时检测到线才表示转向完成
             MotorControl_SetMode(MOTOR_MODE_STOP);
             return 0; // 成功
         }
@@ -125,7 +125,7 @@ void Test_Square_Movement_Hybrid(void)
                         case -1: OLED_ShowString(0, 2, (uint8_t*)"TIMEOUT", 16); break;
                         default: OLED_ShowString(0, 2, (uint8_t*)"UNKNOWN", 16); break;
                     }
-                    delay_ms(500);
+                    delay_ms(50);
                     
                     settle_start_time = tick_ms;
                     current_state = SQUARE_STATE_SETTLING;
