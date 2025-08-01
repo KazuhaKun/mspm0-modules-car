@@ -88,7 +88,7 @@ int main(void)
         // 测试转弯角度计算逻辑（调试转弯180度问题）
         // Test_Turn_Angle_Calculation();
         
-        // 正方形循迹主功能（默认运行）
-        Test_Square_Movement_Hybrid();  // 混合模式：7路循迹直线 + MPU6050精确转弯
+        // 通过按键控制圈数的正方形循迹主功能
+        Test_Square_Movement_Hybrid_Key_Control();  // 按键控制混合模式：7路循迹直线 + MPU6050精确转弯
     }
 }

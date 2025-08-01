@@ -17,7 +17,7 @@
 #include <math.h>
 
 // 循迹PID控制器参数设置
-#define LINE_PID_KP         0.5f   // 比例增益
+#define LINE_PID_KP         1.0f   // 比例增益
 #define LINE_PID_KI         0.0f   // 积分增益
 #define LINE_PID_KD         0.8f   // 微分增益
 #define LINE_PID_INT_LIMIT  100.0f // 积分限幅

@@ -19,8 +19,8 @@
 char oled_buffer[40];
 
 
-#define SQUARE_LINE_SPEED 30.0f       // 正方形直线行驶速度
-#define SQUARE_TURN_SPEED 3.0f       // 原地转弯速度
+#define SQUARE_LINE_SPEED 100.0f       // 正方形直线行驶速度
+#define SQUARE_TURN_SPEED 2.0f       // 原地转弯速度
 #define SQUARE_TURN_SETTLE_MS 50      // 转弯完成后稳定时间（从200ms减少到50ms）
 #define SQUARE_TURN_PRECISION 3.0f    // 转弯精度（度）
 #define SQUARE_TURN_TIMEOUT_MS 1000   // 转弯 超时时间（毫秒）
@@ -75,15 +75,13 @@ static int PerformSensorBasedTurn(int direction) {
  * 2. 检测到左侧转弯信号立即停车
  * 3. 使用循迹传感器反馈进行转向，直到中间传感器检测到线
  * 4. 等待稳定后继续直线行驶
- * 5. 重复4次后停止
+ * 5. 重复4次后停止（一圈正方形）
  */
 void Test_Square_Movement_Hybrid(void)
 {
     OLED_Clear();
-    OLED_ShowString(0, 0, (uint8_t*)"Square Hybrid", 16);
-    OLED_ShowString(0, 2, (uint8_t*)"Line+Turn", 16);
-    delay_ms(1000);
-    OLED_Clear();
+    OLED_ShowString(0, 0, (uint8_t*)"Running...", 16);
+    OLED_ShowString(0, 2, (uint8_t*)"Square", 16);
     
     // 状态变量
     typedef enum {
@@ -118,40 +116,13 @@ void Test_Square_Movement_Hybrid(void)
                     // 重置转弯检测状态
                     TurnDetection_Reset();
                     
-                    // 显示转弯结果
-                    OLED_ShowString(0, 0, (uint8_t*)"Turn Result", 16);
-                    switch(turn_result) {
-                        case 0: OLED_ShowString(0, 2, (uint8_t*)"SUCCESS", 16); break;
-                        case -1: OLED_ShowString(0, 2, (uint8_t*)"TIMEOUT", 16); break;
-                        default: OLED_ShowString(0, 2, (uint8_t*)"UNKNOWN", 16); break;
-                    }
-                    delay_ms(50);
-                    
                     settle_start_time = tick_ms;
                     current_state = SQUARE_STATE_SETTLING;
                 } else {
-                    // 正常直线巡线 - 显示详细传感器状态
-                    OLED_ShowString(0, 0, (uint8_t*)"Line Follow", 16);
-                    sprintf(oled_buffer, "Side: %d/16", completed_sides + 1);
+                    // 正常直线巡线 - 简化显示
+                    OLED_ShowString(0, 0, (uint8_t*)"Running...", 16);
+                    sprintf(oled_buffer, "Side: %d/4", completed_sides + 1);
                     OLED_ShowString(0, 2, (uint8_t*)oled_buffer, 16);
-                    sprintf(oled_buffer, "L_cnt:%d", g_turnDetection.left_sensor_count);
-                    OLED_ShowString(0, 4, (uint8_t*)oled_buffer, 16);
-                    
-                    // 显示左侧传感器具体状态 (0,1,2对应左侧3个传感器)
-                    sprintf(oled_buffer, "L0:%d L1:%d L2:%d", 
-                        g_lineTracker.sensorValue[0] ? 1 : 0,
-                        g_lineTracker.sensorValue[1] ? 1 : 0,
-                        g_lineTracker.sensorValue[2] ? 1 : 0);
-                    OLED_ShowString(0, 6, (uint8_t*)oled_buffer, 16);
-                    
-                    // 显示抑制状态
-                    if (g_turnDetection.state == TURN_STATE_INHIBITED) {
-                        uint32_t inhibit_remaining = TURN_INHIBIT_TIME_MS - (tick_ms - g_turnDetection.inhibit_start_time);
-                        sprintf(oled_buffer, "Inhib:%dms", (int)inhibit_remaining);
-                        OLED_ShowString(64, 0, (uint8_t*)oled_buffer, 16);
-                    } else {
-                        OLED_ShowString(64, 0, (uint8_t*)"Ready", 16);
-                    }
                 }
                 break;
             }
@@ -164,8 +135,8 @@ void Test_Square_Movement_Hybrid(void)
                     // 稳定时间到，继续下一边的直线行驶
                     completed_sides++;
                     
-                    if (completed_sides >= 16) {  // 4圈 * 4边 = 16边
-                        // 完成16边，进入完成状态
+                    if (completed_sides >= 4) {  // 1圈 * 4边 = 4边
+                        // 完成4边，进入完成状态
                         current_state = SQUARE_STATE_COMPLETED;
                     }
                     else {
@@ -174,16 +145,6 @@ void Test_Square_Movement_Hybrid(void)
                         MotorControl_SetMode(MOTOR_MODE_LINE_FOLLOWING);
                         current_state = SQUARE_STATE_LINE_FOLLOWING;
                     }
-                    
-                    OLED_ShowString(0, 0, (uint8_t*)"Resume", 16);
-                    OLED_ShowString(0, 2, (uint8_t*)"Line Follow", 16);
-                    sprintf(oled_buffer, "Side: %d/16", completed_sides + 1);
-                    OLED_ShowString(0, 4, (uint8_t*)oled_buffer, 16);
-                }
-                else {
-                    // 继续稳定等待
-                    sprintf(oled_buffer, "Wait:%dms", (int)(SQUARE_TURN_SETTLE_MS - (tick_ms - settle_start_time)));
-                    OLED_ShowString(0, 4, (uint8_t*)oled_buffer, 16);
                 }
                 break;
             }
@@ -192,14 +153,7 @@ void Test_Square_Movement_Hybrid(void)
             {
                 // 完成状态
                 MotorControl_SetMode(MOTOR_MODE_STOP);
-                
-                OLED_ShowString(0, 0, (uint8_t*)"Square", 16);
-                OLED_ShowString(0, 2, (uint8_t*)"Completed!", 16);
-                OLED_ShowString(0, 4, (uint8_t*)"16/16 sides", 16);
-                OLED_ShowString(0, 6, (uint8_t*)"FINISHED", 16);
-                
-                // 保持完成状态，不再执行其他操作
-                break;
+                return; // 函数结束
             }
         }
         
@@ -210,12 +164,101 @@ void Test_Square_Movement_Hybrid(void)
                     g_lineTracker.sensorValue[2], g_lineTracker.sensorValue[3],
                     g_lineTracker.sensorValue[4], g_lineTracker.sensorValue[5],
                     g_lineTracker.sensorValue[6]);
-            // 根据当前状态选择显示位置，避免覆盖重要信息
-            if (current_state == SQUARE_STATE_LINE_FOLLOWING) {
-                OLED_ShowString(0, 6, (uint8_t*)oled_buffer, 16);
-            }
+            OLED_ShowString(0, 6, (uint8_t*)oled_buffer, 16);
         }
         
         delay_ms(20); // 控制循环频率，提高响应速度
     }
+}
+
+/**
+ * @brief 指定圈数的正方形循迹 - 基于循迹传感器反馈的转向控制
+ * @param laps 正方形圈数 (1-5)
+ */
+void Test_Square_Movement_Hybrid_With_Laps(int laps) {
+    // 确保laps在有效范围内
+    if (laps < 1) laps = 1;
+    if (laps > 5) laps = 5;
+    
+    // Test_Square_Movement_Hybrid执行一次就是一圈(4条边)
+    for (int i = 0; i < laps; i++) {
+        Test_Square_Movement_Hybrid();
+    }
+    
+    // 完成所有圈数后显示完成信息
+    OLED_Clear();
+    sprintf(oled_buffer, "%d laps done!", laps);
+    OLED_ShowString(0, 2, (uint8_t*)oled_buffer, 16);
+    OLED_ShowString(0, 4, (uint8_t*)"Press key exit", 16);
+    
+    // 等待按键退出
+    while(1) {
+        // 检查按键状态
+        if (!DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_23) ||  // Key_1
+            !DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_21) ||  // Key_2
+            !DL_GPIO_readPins(GPIOB, DL_GPIO_PIN_18) ||  // Key_3
+            !DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_17)) {  // Key_4
+            break;
+        }
+        delay_ms(10);
+    }
+}
+
+/**
+ * @brief 通过按键设置并执行指定圈数的正方形循迹
+ * Key1: 增加圈数
+ * Key2: 减少圈数
+ * Key3: 确认并开始执行
+ */
+void Test_Square_Movement_Hybrid_Key_Control(void) {
+    int laps = 1; // 默认圈数
+    
+    // 显示初始界面
+    OLED_Clear();
+    OLED_ShowString(0, 0, (uint8_t*)"Set laps:", 16);
+    sprintf(oled_buffer, "Laps: %d (1-5)", laps);
+    OLED_ShowString(0, 2, (uint8_t*)oled_buffer, 16);
+    OLED_ShowString(0, 4, (uint8_t*)"Key1:+ Key2:-", 16);
+    OLED_ShowString(0, 6, (uint8_t*)"Key3:Start", 16);
+    
+    // 按键控制圈数设置
+    while (1) {
+        // 检查Key1: 增加圈数
+        if (!DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_23)) {
+            delay_ms(20); // 消除抖动
+            if (!DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_23)) { // 再次确认按键状态
+                while (!DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_23)); // 等待按键释放
+                laps++;
+                if (laps > 5) laps = 5;
+                sprintf(oled_buffer, "Laps: %d (1-5)", laps);
+                OLED_ShowString(0, 2, (uint8_t*)oled_buffer, 16);
+            }
+        }
+        
+        // 检查Key2: 减少圈数
+        else if (!DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_21)) {
+            delay_ms(20); // 消除抖动
+            if (!DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_21)) { // 再次确认按键状态
+                while (!DL_GPIO_readPins(GPIOA, DL_GPIO_PIN_21)); // 等待按键释放
+                laps--;
+                if (laps < 1) laps = 1;
+                sprintf(oled_buffer, "Laps: %d (1-5)", laps);
+                OLED_ShowString(0, 2, (uint8_t*)oled_buffer, 16);
+            }
+        }
+        
+        // 检查Key3: 确认并开始执行
+        else if (!DL_GPIO_readPins(GPIOB, DL_GPIO_PIN_18)) {
+            delay_ms(20); // 消除抖动
+            if (!DL_GPIO_readPins(GPIOB, DL_GPIO_PIN_18)) { // 再次确认按键状态
+                while (!DL_GPIO_readPins(GPIOB, DL_GPIO_PIN_18)); // 等待按键释放
+                break; // 退出设置循环，开始执行
+            }
+        }
+        
+        delay_ms(50);
+    }
+    
+    // 开始执行指定圈数的正方形运动
+    Test_Square_Movement_Hybrid_With_Laps(laps);
 }

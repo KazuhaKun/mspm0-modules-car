@@ -227,6 +227,22 @@ extern "C" {
 #define GPIO_LED_PIN_BEEP_PORT                                           (GPIOB)
 #define GPIO_LED_PIN_BEEP_PIN                                   (DL_GPIO_PIN_27)
 #define GPIO_LED_PIN_BEEP_IOMUX                                  (IOMUX_PINCM58)
+/* Defines for Key_1: GPIOA.23 with pinCMx 53 on package pin 24 */
+#define GPIO_Switch_Key_1_PORT                                           (GPIOA)
+#define GPIO_Switch_Key_1_PIN                                   (DL_GPIO_PIN_23)
+#define GPIO_Switch_Key_1_IOMUX                                  (IOMUX_PINCM53)
+/* Defines for Key_2: GPIOA.21 with pinCMx 46 on package pin 17 */
+#define GPIO_Switch_Key_2_PORT                                           (GPIOA)
+#define GPIO_Switch_Key_2_PIN                                   (DL_GPIO_PIN_21)
+#define GPIO_Switch_Key_2_IOMUX                                  (IOMUX_PINCM46)
+/* Defines for Key_3: GPIOB.18 with pinCMx 44 on package pin 15 */
+#define GPIO_Switch_Key_3_PORT                                           (GPIOB)
+#define GPIO_Switch_Key_3_PIN                                   (DL_GPIO_PIN_18)
+#define GPIO_Switch_Key_3_IOMUX                                  (IOMUX_PINCM44)
+/* Defines for Key_4: GPIOA.17 with pinCMx 39 on package pin 10 */
+#define GPIO_Switch_Key_4_PORT                                           (GPIOA)
+#define GPIO_Switch_Key_4_PIN                                   (DL_GPIO_PIN_17)
+#define GPIO_Switch_Key_4_IOMUX                                  (IOMUX_PINCM39)
 
 /* clang-format on */
 
