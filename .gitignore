@@ -33,6 +33,3 @@ startup_*.o
 # Clangd files
 .clangd
 .clangd/
-
-# Test output
-Test/
