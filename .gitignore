@@ -1,0 +1,38 @@
+# Build output directories
+Debug/
+
+# Compiled object files
+*.o
+*.obj
+*.d
+
+# Executables and libraries
+*.out
+*.exe
+*.dll
+*.so
+*.a
+
+# Linker and map files
+*.map
+*.lnk
+*_linkInfo.xml
+
+# Configuration files generated during build
+ti_msp_dl_config.*
+startup_*.c
+startup_*.o
+
+# Temporary files
+*.tmp
+*.temp
+
+# Log files
+*.log
+
+# Clangd files
+.clangd
+.clangd/
+
+# Test output
+Test/
